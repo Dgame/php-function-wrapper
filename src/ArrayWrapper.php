@@ -391,7 +391,7 @@ final class ArrayWrapper
             return $this->take($index);
         }
 
-        return new self([]);
+        return $this;
     }
 
     /**
@@ -433,7 +433,21 @@ final class ArrayWrapper
             return $this->take($index + 1);
         }
 
-        return new self([]);
+        return $this;
+    }
+
+    /**
+     * @param array $input
+     *
+     * @return ArrayWrapper
+     */
+    public function default(array $input): ArrayWrapper
+    {
+        if ($this->isEmpty()) {
+            $this->input = $input;
+        }
+
+        return $this;
     }
 
     /**

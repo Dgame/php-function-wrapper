@@ -1,6 +1,7 @@
 <?php
 
 namespace Dgame\Wrapper;
+
 use Dgame\Wrapper\Optional\Optional;
 
 /**
@@ -12,16 +13,16 @@ final class StringWrapper
     /**
      * @var string
      */
-    private $subject;
+    private $input;
 
     /**
      * StringWrapper constructor.
      *
-     * @param string|null $subject
+     * @param string|null $input
      */
-    public function __construct(string $subject = null)
+    public function __construct(string $input = null)
     {
-        $this->subject = $subject;
+        $this->input = $input;
     }
 
     /**
@@ -29,7 +30,7 @@ final class StringWrapper
      */
     public function get(): string
     {
-        return $this->subject;
+        return $this->input;
     }
 
     /**
@@ -39,7 +40,7 @@ final class StringWrapper
      */
     public function explode(string $delimeter): ArrayWrapper
     {
-        return new ArrayWrapper(explode($delimeter, $this->subject));
+        return new ArrayWrapper(explode($delimeter, $this->input));
     }
 
     /**
@@ -57,7 +58,7 @@ final class StringWrapper
      */
     public function split(int $length): ArrayWrapper
     {
-        return new ArrayWrapper(str_split($this->subject, $length));
+        return new ArrayWrapper(str_split($this->input, $length));
     }
 
     /**
@@ -67,7 +68,7 @@ final class StringWrapper
      */
     public function beginsWith(string $prefix): bool
     {
-        return substr($this->subject, 0, strlen($prefix)) === $prefix;
+        return substr($this->input, 0, strlen($prefix)) === $prefix;
     }
 
     /**
@@ -77,7 +78,7 @@ final class StringWrapper
      */
     public function endsWith(string $suffix): bool
     {
-        return substr($this->subject, -strlen($suffix)) === $suffix;
+        return substr($this->input, -strlen($suffix)) === $suffix;
     }
 
     /**
@@ -87,7 +88,7 @@ final class StringWrapper
      */
     public function prefix(string $prefix): StringWrapper
     {
-        $this->subject = $prefix . $this->subject;
+        $this->input = $prefix . $this->input;
 
         return $this;
     }
@@ -99,7 +100,7 @@ final class StringWrapper
      */
     public function suffix(string $suffix): StringWrapper
     {
-        $this->subject .= $suffix;
+        $this->input .= $suffix;
 
         return $this;
     }
@@ -112,36 +113,7 @@ final class StringWrapper
      */
     public function matches(string $pattern, array &$matches = []): bool
     {
-        return preg_match($pattern, $this->subject, $matches) === 1;
-    }
-
-    /**
-     * @param string $needle
-     * @param int    $offset
-     *
-     * @return StringWrapper
-     */
-    public function from(string $needle, int $offset = 0): StringWrapper
-    {
-        if ($this->contains($needle, $pos)) {
-            return $this->substring($pos + $offset);
-        }
-
-        return new self();
-    }
-
-    /**
-     * @param string $needle
-     *
-     * @return StringWrapper
-     */
-    public function until(string $needle): StringWrapper
-    {
-        if ($this->contains($needle, $pos)) {
-            return $this->substring(0, $pos);
-        }
-
-        return new self();
+        return preg_match($pattern, $this->input, $matches) === 1;
     }
 
     /**
@@ -149,7 +121,7 @@ final class StringWrapper
      */
     public function toUpper(): StringWrapper
     {
-        $this->subject = strtoupper($this->subject);
+        $this->input = strtoupper($this->input);
 
         return $this;
     }
@@ -159,7 +131,7 @@ final class StringWrapper
      */
     public function toLower(): StringWrapper
     {
-        $this->subject = strtolower($this->subject);
+        $this->input = strtolower($this->input);
 
         return $this;
     }
@@ -169,7 +141,7 @@ final class StringWrapper
      */
     public function toUpperFirst(): StringWrapper
     {
-        $this->subject = ucfirst($this->subject);
+        $this->input = ucfirst($this->input);
 
         return $this;
     }
@@ -179,7 +151,7 @@ final class StringWrapper
      */
     public function toLowerFirst(): StringWrapper
     {
-        $this->subject = lcfirst($this->subject);
+        $this->input = lcfirst($this->input);
 
         return $this;
     }
@@ -192,9 +164,9 @@ final class StringWrapper
     public function trim(string $mask = null): StringWrapper
     {
         if ($mask === null) {
-            $this->subject = trim($this->subject);
+            $this->input = trim($this->input);
         } else {
-            $this->subject = trim($this->subject, $mask);
+            $this->input = trim($this->input, $mask);
         }
 
         return $this;
@@ -208,9 +180,9 @@ final class StringWrapper
     public function leftTrim(string $mask = null): StringWrapper
     {
         if ($mask === null) {
-            $this->subject = ltrim($this->subject);
+            $this->input = ltrim($this->input);
         } else {
-            $this->subject = ltrim($this->subject, $mask);
+            $this->input = ltrim($this->input, $mask);
         }
 
         return $this;
@@ -224,9 +196,9 @@ final class StringWrapper
     public function rightTrim(string $mask = null): StringWrapper
     {
         if ($mask === null) {
-            $this->subject = rtrim($this->subject);
+            $this->input = rtrim($this->input);
         } else {
-            $this->subject = rtrim($this->subject, $mask);
+            $this->input = rtrim($this->input, $mask);
         }
 
         return $this;
@@ -240,7 +212,7 @@ final class StringWrapper
      */
     public function substring(int $start, int $length = null): StringWrapper
     {
-        return new self(substr($this->subject, $start, $length ?? $this->length()));
+        return new self(substr($this->input, $start, $length ?? $this->length()));
     }
 
     /**
@@ -251,7 +223,7 @@ final class StringWrapper
      */
     public function fromFirstOccurenceOf(string $needle, bool $beforeNeedle = false): StringWrapper
     {
-        return new self(strstr($this->subject, $needle, $beforeNeedle));
+        return new self(strstr($this->input, $needle, $beforeNeedle));
     }
 
     /**
@@ -261,7 +233,7 @@ final class StringWrapper
      */
     public function fromLastOccurenceOf(string $needle): StringWrapper
     {
-        return new self(strchr($this->subject, $needle));
+        return new self(strchr($this->input, $needle));
     }
 
     /**
@@ -282,7 +254,7 @@ final class StringWrapper
      */
     public function firstPositionOf(string $needle): Optional
     {
-        return ($pos = strpos($this->subject, $needle)) === false ? none() : some($pos);
+        return ($pos = strpos($this->input, $needle)) === false ? none() : some($pos);
     }
 
     /**
@@ -293,7 +265,91 @@ final class StringWrapper
      */
     public function lastPositionOf(string $needle, int $offset = 0): Optional
     {
-        return ($pos = strrpos($this->subject, $needle, $offset)) === false ? none() : some($pos);
+        return ($pos = strrpos($this->input, $needle, $offset)) === false ? none() : some($pos);
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return StringWrapper
+     */
+    public function before(string $value): StringWrapper
+    {
+        if ($this->firstPositionOf($value)->isSome($index)) {
+            return $this->substring(0, $index);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return StringWrapper
+     */
+    public function after(string $value): StringWrapper
+    {
+        if ($this->firstPositionOf($value)->isSome($index)) {
+            return $this->substring($index + 1);
+        }
+
+        return new self();
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return StringWrapper
+     */
+    public function from(string $value): StringWrapper
+    {
+        if ($this->firstPositionOf($value)->isSome($index)) {
+            return $this->substring($index);
+        }
+
+        return new self();
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return StringWrapper
+     */
+    public function until(string $value): StringWrapper
+    {
+        if ($this->firstPositionOf($value)->isSome($index)) {
+            return $this->substring(0, $index + 1);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $input
+     *
+     * @return StringWrapper
+     */
+    public function default(string $input): StringWrapper
+    {
+        if ($this->isEmpty()) {
+            $this->input = $input;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param int $index
+     *
+     * @return Optional
+     */
+    public function at(int $index): Optional
+    {
+        if ($index >= 0 && $index < $this->length()) {
+            return some($this->input[$index]);
+        }
+
+        return none();
     }
 
     /**
@@ -301,7 +357,7 @@ final class StringWrapper
      */
     public function reverse(): StringWrapper
     {
-        $this->subject = strrev($this->subject);
+        $this->input = strrev($this->input);
 
         return $this;
     }
@@ -311,7 +367,7 @@ final class StringWrapper
      */
     public function length(): int
     {
-        return strlen($this->subject);
+        return strlen($this->input);
     }
 
     /**
@@ -319,7 +375,7 @@ final class StringWrapper
      */
     public function isEmpty(): bool
     {
-        return empty($this->subject);
+        return empty($this->input);
     }
 
     /**
@@ -327,7 +383,7 @@ final class StringWrapper
      */
     public function isNull(): bool
     {
-        return $this->subject === null;
+        return $this->input === null;
     }
 
     /**
@@ -338,7 +394,7 @@ final class StringWrapper
      */
     public function replace(string $search, string $replace): StringWrapper
     {
-        $this->subject = str_replace($search, $replace, $this->subject);
+        $this->input = str_replace($search, $replace, $this->input);
 
         return $this;
     }
@@ -350,7 +406,7 @@ final class StringWrapper
      */
     public function repeat(int $times): StringWrapper
     {
-        $this->subject = str_repeat($this->subject, $times);
+        $this->input = str_repeat($this->input, $times);
 
         return $this;
     }
@@ -363,7 +419,7 @@ final class StringWrapper
     public function format(...$args): StringWrapper
     {
         if (!empty($args)) {
-            $this->subject = sprintf($this->subject, ...$args);
+            $this->input = sprintf($this->input, ...$args);
         }
 
         return $this;
