@@ -387,14 +387,13 @@ final class StringWrapper
     }
 
     /**
-     * @param string $search
-     * @param string $replace
+     * @param array $replacement
      *
      * @return StringWrapper
      */
-    public function replace(string $search, string $replace): StringWrapper
+    public function replace(array $replacement): StringWrapper
     {
-        $this->input = str_replace($search, $replace, $this->input);
+        $this->input = str_replace(array_keys($replacement), array_values($replacement), $this->input);
 
         return $this;
     }
