@@ -1,6 +1,7 @@
 <?php
 
 namespace Dgame\Wrapper;
+use Dgame\Wrapper\Optional\Optional;
 
 /**
  * Class StringWrapper
@@ -29,6 +30,34 @@ final class StringWrapper
     public function get(): string
     {
         return $this->subject;
+    }
+
+    /**
+     * @param string $delimeter
+     *
+     * @return ArrayWrapper
+     */
+    public function explode(string $delimeter): ArrayWrapper
+    {
+        return new ArrayWrapper(explode($delimeter, $this->subject));
+    }
+
+    /**
+     * @return ArrayWrapper
+     */
+    public function chars(): ArrayWrapper
+    {
+        return $this->split(1);
+    }
+
+    /**
+     * @param int $length
+     *
+     * @return ArrayWrapper
+     */
+    public function split(int $length): ArrayWrapper
+    {
+        return new ArrayWrapper(str_split($this->subject, $length));
     }
 
     /**
@@ -236,16 +265,6 @@ final class StringWrapper
     }
 
     /**
-     * @param string $needle
-     *
-     * @return bool|int
-     */
-    public function firstPositionOf(string $needle)
-    {
-        return strpos($this->subject, $needle);
-    }
-
-    /**
      * @param string   $needle
      * @param int|null $pos
      *
@@ -253,18 +272,28 @@ final class StringWrapper
      */
     public function contains(string $needle, int &$pos = null): bool
     {
-        return ($pos = $this->firstPositionOf($needle)) !== false;
+        return $this->firstPositionOf($needle)->isSome($pos);
+    }
+
+    /**
+     * @param string $needle
+     *
+     * @return Optional
+     */
+    public function firstPositionOf(string $needle): Optional
+    {
+        return ($pos = strpos($this->subject, $needle)) === false ? none() : some($pos);
     }
 
     /**
      * @param string $needle
      * @param int    $offset
      *
-     * @return bool|int
+     * @return Optional
      */
-    public function lastPositionOf(string $needle, int $offset = 0)
+    public function lastPositionOf(string $needle, int $offset = 0): Optional
     {
-        return strrpos($this->subject, $needle, $offset);
+        return ($pos = strrpos($this->subject, $needle, $offset)) === false ? none() : some($pos);
     }
 
     /**
@@ -299,16 +328,6 @@ final class StringWrapper
     public function isNull(): bool
     {
         return $this->subject === null;
-    }
-
-    /**
-     * @param int $length
-     *
-     * @return array
-     */
-    public function split(int $length = 1): array
-    {
-        return str_split($this->subject, $length);
     }
 
     /**
@@ -348,15 +367,5 @@ final class StringWrapper
         }
 
         return $this;
-    }
-
-    /**
-     * @param string $delimeter
-     *
-     * @return array
-     */
-    public function explode(string $delimeter): array
-    {
-        return explode($delimeter, $this->subject);
     }
 }

@@ -2,14 +2,27 @@
 
 namespace Dgame\Wrapper;
 
+use Dgame\Wrapper\Optional\None;
+use Dgame\Wrapper\Optional\Some;
+
 /**
- * @param string $subject
+ * @param string $str
  *
  * @return StringWrapper
  */
-function string(string $subject): StringWrapper
+function string(string $str): StringWrapper
 {
-    return new StringWrapper($subject);
+    return new StringWrapper($str);
+}
+
+/**
+ * @param string $str
+ *
+ * @return ArrayWrapper
+ */
+function chars(string $str): ArrayWrapper
+{
+    return string($str)->chars();
 }
 
 /**
@@ -20,4 +33,22 @@ function string(string $subject): StringWrapper
 function assoc(array $data): ArrayWrapper
 {
     return new ArrayWrapper($data);
+}
+
+/**
+ * @param $data
+ *
+ * @return Some
+ */
+function some($data): Some
+{
+    return new Some($data);
+}
+
+/**
+ * @return None
+ */
+function none(): None
+{
+    return None::Instance();
 }

@@ -2,6 +2,8 @@
 
 namespace Dgame\Wrapper;
 
+use Dgame\Wrapper\Optional\Optional;
+
 /**
  * Class ArrayWrapper
  * @package Dgame\Wrapper
@@ -32,12 +34,22 @@ final class ArrayWrapper
     }
 
     /**
+     * @param string|null $glue
+     *
+     * @return StringWrapper
+     */
+    public function implode(string $glue = null): StringWrapper
+    {
+        return new StringWrapper(implode($glue, $this->input));
+    }
+
+    /**
      * @param int  $size
      * @param bool $preserveKeys
      *
      * @return ArrayWrapper
      */
-    public function chunk(int $size, bool $preserveKeys = false): ArrayWrapper
+    public function chunks(int $size, bool $preserveKeys = false): ArrayWrapper
     {
         return new self(array_chunk($this->input, $size, $preserveKeys));
     }
@@ -48,7 +60,7 @@ final class ArrayWrapper
      *
      * @return ArrayWrapper
      */
-    public function column($column, $indexKey = null): ArrayWrapper
+    public function columns($column, $indexKey = null): ArrayWrapper
     {
         return new self(array_column($this->input, $column, $indexKey));
     }
@@ -68,7 +80,7 @@ final class ArrayWrapper
     /**
      * @return ArrayWrapper
      */
-    public function filter(): ArrayWrapper
+    public function filterEmpty(): ArrayWrapper
     {
         return new self(array_filter($this->input));
     }
@@ -79,9 +91,42 @@ final class ArrayWrapper
      *
      * @return ArrayWrapper
      */
-    public function filterBy(callable $callback, int $flag = 0): ArrayWrapper
+    public function filter(callable $callback, int $flag = 0): ArrayWrapper
     {
         return new self(array_filter($this->input, $callback, $flag));
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return ArrayWrapper
+     */
+    public function map(callable $callback): ArrayWrapper
+    {
+        $this->input = array_map($callback, $this->input);
+
+        return $this;
+    }
+
+    /**
+     * @param callable $callback
+     * @param null     $initial
+     *
+     * @return mixed
+     */
+    public function reduce(callable $callback, $initial = null)
+    {
+        return array_reduce($this->input, $callback, $initial);
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return bool
+     */
+    public function walk(callable $callback): bool
+    {
+        return array_walk($this->input, $callback);
     }
 
     /**
@@ -105,7 +150,7 @@ final class ArrayWrapper
     }
 
     /**
-     * @param null $key
+     * @param mixed|null $key
      *
      * @return ArrayWrapper
      */
@@ -123,25 +168,13 @@ final class ArrayWrapper
     }
 
     /**
-     * @param callable $callback
+     * @param array[] ...$input
      *
      * @return ArrayWrapper
      */
-    public function map(callable $callback): ArrayWrapper
+    public function mergeWith(array ...$input): ArrayWrapper
     {
-        $this->input = array_map($callback, $this->input);
-
-        return $this;
-    }
-
-    /**
-     * @param array $input
-     *
-     * @return ArrayWrapper
-     */
-    public function mergeWith(array $input): ArrayWrapper
-    {
-        $this->input = array_merge($this->input, $input);
+        $this->input = array_merge($this->input, ...$input);
 
         return $this;
     }
@@ -183,27 +216,6 @@ final class ArrayWrapper
     }
 
     /**
-     * @param callable $callback
-     * @param null     $initial
-     *
-     * @return mixed
-     */
-    public function reduce(callable $callback, $initial = null)
-    {
-        return array_reduce($this->input, $callback, $initial);
-    }
-
-    /**
-     * @param callable $callback
-     *
-     * @return bool
-     */
-    public function walk(callable $callback): bool
-    {
-        return array_walk($this->input, $callback);
-    }
-
-    /**
      * @param array $replace
      *
      * @return ArrayWrapper
@@ -224,13 +236,23 @@ final class ArrayWrapper
     }
 
     /**
-     * @param $needle
+     * @param $value
      *
-     * @return mixed
+     * @return Optional
      */
-    public function search($needle)
+    public function search($value): Optional
     {
-        return array_search($needle, $this->input);
+        return ($key = array_search($value, $this->input)) === false ? none() : some($key);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return Optional
+     */
+    public function indexOf($value): Optional
+    {
+        return $this->values()->search($value);
     }
 
     /**
@@ -262,7 +284,7 @@ final class ArrayWrapper
      */
     public function splice(int $offset, int $length = 0, array $replacement = []): ArrayWrapper
     {
-        $this->input = array_slice($this->input, $offset, $length, $replacement);
+        $this->input = array_splice($this->input, $offset, $length, $replacement);
 
         return $this;
     }
@@ -281,5 +303,261 @@ final class ArrayWrapper
     public function isEmpty(): bool
     {
         return empty($this->input);
+    }
+
+    /**
+     * @param int $n
+     *
+     * @return ArrayWrapper
+     */
+    public function take(int $n): ArrayWrapper
+    {
+        return $this->slice(0, $n);
+    }
+
+    /**
+     * @param int $n
+     *
+     * @return ArrayWrapper
+     */
+    public function skip(int $n): ArrayWrapper
+    {
+        return $this->slice($n);
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return ArrayWrapper
+     */
+    public function takeWhile(callable $callback): ArrayWrapper
+    {
+        $n = 0;
+        foreach ($this->input as $value) {
+            if (!$callback($value)) {
+                break;
+            }
+            $n++;
+        }
+
+        return $this->take($n);
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return ArrayWrapper
+     */
+    public function skipWhile(callable $callback): ArrayWrapper
+    {
+        $n = 0;
+        foreach ($this->input as $value) {
+            if (!$callback($value)) {
+                break;
+            }
+            $n++;
+        }
+
+        return $this->skip($n);
+    }
+
+    /**
+     * @param $left
+     * @param $right
+     *
+     * @return ArrayWrapper
+     */
+    public function between($left, $right): ArrayWrapper
+    {
+        if ($this->indexOf($left)->isSome($offset)) {
+            if ($this->indexOf($right)->isSome($length)) {
+                return $this->slice($offset + 1, $length - $offset - 1);
+            }
+
+            return $this->skip($offset + 1);
+        }
+
+        return new self([]);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return ArrayWrapper
+     */
+    public function before($value): ArrayWrapper
+    {
+        if ($this->indexOf($value)->isSome($index)) {
+            return $this->take($index);
+        }
+
+        return new self([]);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return ArrayWrapper
+     */
+    public function after($value): ArrayWrapper
+    {
+        if ($this->indexOf($value)->isSome($index)) {
+            return $this->skip($index + 1);
+        }
+
+        return new self([]);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return ArrayWrapper
+     */
+    public function from($value): ArrayWrapper
+    {
+        if ($this->indexOf($value)->isSome($index)) {
+            return $this->skip($index);
+        }
+
+        return new self([]);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return ArrayWrapper
+     */
+    public function until($value): ArrayWrapper
+    {
+        if ($this->indexOf($value)->isSome($index)) {
+            return $this->take($index + 1);
+        }
+
+        return new self([]);
+    }
+
+    /**
+     * @param $key
+     *
+     * @return Optional
+     */
+    public function at($key): Optional
+    {
+        if ($this->hasKey($key)) {
+            return some($this->input[$key]);
+        }
+
+        return none();
+    }
+
+    /**
+     * @param $value
+     *
+     * @return Optional
+     */
+    public function find($value): Optional
+    {
+        if ($this->search($value)->isSome($key)) {
+            return some($this->input[$key]);
+        }
+
+        return none();
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return array
+     */
+    public function findBy(callable $callback): array
+    {
+        $results = [];
+        foreach ($this->input as $key => $value) {
+            if ($callback($value, $key)) {
+                $results[$key] = $value;
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return bool
+     */
+    public function all(callable $callback): bool
+    {
+        foreach ($this->input as $value) {
+            if (!$callback($value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return bool
+     */
+    public function any(callable $callback): bool
+    {
+        foreach ($this->input as $value) {
+            if ($callback($value)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return float
+     */
+    public function sum(): float
+    {
+        return array_sum($this->input);
+    }
+
+    /**
+     * @return float
+     */
+    public function product(): float
+    {
+        return array_product($this->input);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function max()
+    {
+        return max($this->input);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function min()
+    {
+        return min($this->input);
+    }
+
+    /**
+     * @return array
+     */
+    public function countOccurrences(): array
+    {
+        return array_count_values($this->input);
+    }
+
+    /**
+     * @return float
+     */
+    public function average(): float
+    {
+        return $this->sum() / $this->length();
     }
 }
