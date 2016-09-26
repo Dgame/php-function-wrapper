@@ -290,7 +290,7 @@ final class StringWrapper
     public function after(string $value): StringWrapper
     {
         if ($this->firstPositionOf($value)->isSome($index)) {
-            return $this->substring($index + 1);
+            return $this->substring($index + strlen($value));
         }
 
         return new self();
@@ -318,7 +318,7 @@ final class StringWrapper
     public function until(string $value): StringWrapper
     {
         if ($this->firstPositionOf($value)->isSome($index)) {
-            return $this->substring(0, $index + 1);
+            return $this->substring(0, $index);
         }
 
         return $this;
