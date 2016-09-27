@@ -423,4 +423,22 @@ final class StringWrapper
 
         return $this;
     }
+
+    /**
+     * @param string $input
+     *
+     * @return bool
+     */
+    public function isEqualTo(string $input): bool
+    {
+        return $this->input === $input;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->input;
+    }
 }

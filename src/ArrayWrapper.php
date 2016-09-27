@@ -8,7 +8,7 @@ use Dgame\Wrapper\Optional\Optional;
  * Class ArrayWrapper
  * @package Dgame\Wrapper
  */
-final class ArrayWrapper
+final class ArrayWrapper extends \ArrayObject
 {
     /**
      * @var array
@@ -18,11 +18,13 @@ final class ArrayWrapper
     /**
      * ArrayWrapper constructor.
      *
-     * @param array $data
+     * @param array $input
      */
-    public function __construct(array $data)
+    public function __construct(array $input)
     {
-        $this->input = $data;
+        parent::__construct($input);
+
+        $this->input = $input;
     }
 
     /**
@@ -573,5 +575,15 @@ final class ArrayWrapper
     public function average(): float
     {
         return $this->sum() / $this->length();
+    }
+
+    /**
+     * @param array $input
+     *
+     * @return bool
+     */
+    public function isEqualTo(array $input): bool
+    {
+        return $this->input === $input;
     }
 }
