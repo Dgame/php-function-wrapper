@@ -146,7 +146,7 @@ final class ArrayWrapper extends \ArrayObject
      *
      * @return bool
      */
-    public function contains($needle): bool
+    public function hasValue($needle): bool
     {
         return in_array($needle, $this->input);
     }
