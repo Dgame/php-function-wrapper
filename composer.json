@@ -26,6 +26,9 @@
         "classmap": [
             "src/"
         ],
+        "files": [
+            "functions.php"
+        ],
         "psr-4": {
             "Dgame\\Wrapper\\": "src/"
         }
