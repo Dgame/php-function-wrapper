@@ -30,7 +30,7 @@ final class StringWrapper
      */
     public function get(): string
     {
-        return $this->input;
+        return $this->input ?? '';
     }
 
     /**
