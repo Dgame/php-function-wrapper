@@ -27,7 +27,7 @@
             "src/"
         ],
         "files": [
-            "functions.php"
+            "src/functions.php"
         ],
         "psr-4": {
             "Dgame\\Wrapper\\": "src/"
