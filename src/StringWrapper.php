@@ -121,9 +121,7 @@ final class StringWrapper
      */
     public function toUpper(): StringWrapper
     {
-        $this->input = strtoupper($this->input);
-
-        return $this;
+        return new self(strtoupper($this->input));
     }
 
     /**
@@ -131,9 +129,7 @@ final class StringWrapper
      */
     public function toLower(): StringWrapper
     {
-        $this->input = strtolower($this->input);
-
-        return $this;
+        return new self(strtolower($this->input));
     }
 
     /**
@@ -141,9 +137,7 @@ final class StringWrapper
      */
     public function toUpperFirst(): StringWrapper
     {
-        $this->input = ucfirst($this->input);
-
-        return $this;
+        return new self(ucfirst($this->input));
     }
 
     /**
@@ -151,9 +145,7 @@ final class StringWrapper
      */
     public function toLowerFirst(): StringWrapper
     {
-        $this->input = lcfirst($this->input);
-
-        return $this;
+        return new self(lcfirst($this->input));
     }
 
     /**
@@ -357,9 +349,7 @@ final class StringWrapper
      */
     public function reverse(): StringWrapper
     {
-        $this->input = strrev($this->input);
-
-        return $this;
+        return new self(strrev($this->input));
     }
 
     /**
@@ -393,9 +383,7 @@ final class StringWrapper
      */
     public function replace(array $replacement): StringWrapper
     {
-        $this->input = str_replace(array_keys($replacement), array_values($replacement), $this->input);
-
-        return $this;
+        return new self(str_replace(array_keys($replacement), array_values($replacement), $this->input));
     }
 
     /**
@@ -405,9 +393,7 @@ final class StringWrapper
      */
     public function repeat(int $times): StringWrapper
     {
-        $this->input = str_repeat($this->input, $times);
-
-        return $this;
+        return new self(str_repeat($this->input, $times));
     }
 
     /**

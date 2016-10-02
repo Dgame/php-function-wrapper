@@ -102,9 +102,7 @@ final class ArrayWrapper extends \ArrayObject
      */
     public function combineWith(array $input): ArrayWrapper
     {
-        $this->input = array_combine($this->input, $input);
-
-        return $this;
+        return new self(array_combine($this->input, $input));
     }
 
     /**
