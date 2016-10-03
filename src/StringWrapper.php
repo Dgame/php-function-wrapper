@@ -385,22 +385,6 @@ final class StringWrapper
     }
 
     /**
-     * @return bool
-     */
-    public function isEmpty(): bool
-    {
-        return empty($this->input);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isNull(): bool
-    {
-        return $this->input === null;
-    }
-
-    /**
      * @param array $replacement
      *
      * @return StringWrapper
@@ -452,6 +436,22 @@ final class StringWrapper
         return $this->input === $input;
     }
 
+    /**
+     * @return bool
+     */
+    public function isEmpty(): bool
+    {
+        return empty($this->input);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNull(): bool
+    {
+        return $this->input === null;
+    }
+    
     /**
      * @return string
      */
