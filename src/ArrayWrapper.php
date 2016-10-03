@@ -244,13 +244,33 @@ final class ArrayWrapper extends \ArrayObject
     }
 
     /**
-     * @param array $replace
+     * @return ArrayWrapper
+     */
+    public function copy(): ArrayWrapper
+    {
+        return new self($this->input);
+    }
+
+    /**
+     * @param array $replacement
      *
      * @return ArrayWrapper
      */
-    public function replace(array $replace): ArrayWrapper
+    public function replace(array $replacement): ArrayWrapper
     {
-        return new self(array_replace($this->input, $replace));
+        return $this->copy()->replaceInPlace($replacement);
+    }
+
+    /**
+     * @param array $replacement
+     *
+     * @return ArrayWrapper
+     */
+    public function replaceInPlace(array $replacement): ArrayWrapper
+    {
+        $this->input = array_replace($this->input, $replacement);
+
+        return $this;
     }
 
     /**

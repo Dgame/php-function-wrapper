@@ -385,13 +385,33 @@ final class StringWrapper
     }
 
     /**
+     * @return StringWrapper
+     */
+    public function copy(): StringWrapper
+    {
+        return new self($this->input);
+    }
+
+    /**
      * @param array $replacement
      *
      * @return StringWrapper
      */
     public function replace(array $replacement): StringWrapper
     {
-        return new self(str_replace(array_keys($replacement), array_values($replacement), $this->input));
+        return $this->copy()->replaceInPlace($replacement);
+    }
+
+    /**
+     * @param array $replacement
+     *
+     * @return StringWrapper
+     */
+    public function replaceInPlace(array $replacement): StringWrapper
+    {
+        $this->input = str_replace(array_keys($replacement), array_values($replacement), $this->input);
+
+        return $this;
     }
 
     /**
@@ -451,7 +471,7 @@ final class StringWrapper
     {
         return $this->input === null;
     }
-    
+
     /**
      * @return string
      */
