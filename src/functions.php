@@ -6,33 +6,33 @@ use Dgame\Wrapper\Optional\None;
 use Dgame\Wrapper\Optional\Some;
 
 /**
- * @param string $str
+ * @param string|null $input
  *
  * @return StringWrapper
  */
-function string(string $str): StringWrapper
+function string(string $input = null): StringWrapper
 {
-    return new StringWrapper($str);
+    return new StringWrapper($input);
 }
 
 /**
- * @param string $str
+ * @param string $input
  *
  * @return ArrayWrapper
  */
-function chars(string $str): ArrayWrapper
+function chars(string $input): ArrayWrapper
 {
-    return string($str)->chars();
+    return string($input)->chars();
 }
 
 /**
- * @param array $data
+ * @param array $input
  *
  * @return ArrayWrapper
  */
-function assoc(array $data): ArrayWrapper
+function assoc(array $input): ArrayWrapper
 {
-    return new ArrayWrapper($data);
+    return new ArrayWrapper($input);
 }
 
 /**
