@@ -34,21 +34,25 @@ final class StringWrapper
     }
 
     /**
-     * @param string $delimeter
+     * @param string   $delimeter
+     * @param int|null $limit
      *
      * @return ArrayWrapper
      */
-    public function explode(string $delimeter): ArrayWrapper
+    public function explode(string $delimeter, int $limit = null): ArrayWrapper
     {
-        return new ArrayWrapper(explode($delimeter, $this->input));
+        return new ArrayWrapper(explode($delimeter, $this->input, $limit));
     }
 
     /**
+     * @param string   $pattern
+     * @param int|null $limit
+     *
      * @return ArrayWrapper
      */
-    public function chars(): ArrayWrapper
+    public function split(string $pattern, int $limit = null): ArrayWrapper
     {
-        return $this->split(1);
+        return new ArrayWrapper(preg_split($pattern, $this->input, $limit, PREG_SPLIT_NO_EMPTY));
     }
 
     /**
@@ -56,9 +60,28 @@ final class StringWrapper
      *
      * @return ArrayWrapper
      */
-    public function split(int $length): ArrayWrapper
+    public function chunks(int $length): ArrayWrapper
     {
         return new ArrayWrapper(str_split($this->input, $length));
+    }
+
+    /**
+     * @return ArrayWrapper
+     */
+    public function chars(): ArrayWrapper
+    {
+        return $this->chunks(1);
+    }
+
+    /**
+     * @param int         $length
+     * @param string|null $end
+     *
+     * @return StringWrapper
+     */
+    public function chunkSplit(int $length, string $end = null): StringWrapper
+    {
+        return new self(chunk_split($this->input, $length, $end));
     }
 
     /**
@@ -241,12 +264,13 @@ final class StringWrapper
 
     /**
      * @param string $needle
+     * @param int    $offset
      *
      * @return Optional
      */
-    public function firstPositionOf(string $needle): Optional
+    public function firstPositionOf(string $needle, int $offset = 0): Optional
     {
-        return ($pos = strpos($this->input, $needle)) === false ? none() : some($pos);
+        return ($pos = strpos($this->input, $needle, $offset)) === false ? none() : some($pos);
     }
 
     /**
@@ -408,6 +432,14 @@ final class StringWrapper
         }
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function encode(): string
+    {
+        return htmlspecialchars($this->input);
     }
 
     /**
