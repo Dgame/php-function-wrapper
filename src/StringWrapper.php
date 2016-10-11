@@ -142,7 +142,7 @@ final class StringWrapper
     /**
      * @return StringWrapper
      */
-    public function toUpper(): StringWrapper
+    public function asUpperCase(): StringWrapper
     {
         return new self(strtoupper($this->input));
     }
@@ -150,7 +150,7 @@ final class StringWrapper
     /**
      * @return StringWrapper
      */
-    public function toLower(): StringWrapper
+    public function asLowerCase(): StringWrapper
     {
         return new self(strtolower($this->input));
     }
@@ -158,7 +158,7 @@ final class StringWrapper
     /**
      * @return StringWrapper
      */
-    public function toUpperFirst(): StringWrapper
+    public function asCapitalized(): StringWrapper
     {
         return new self(ucfirst($this->input));
     }
@@ -166,9 +166,81 @@ final class StringWrapper
     /**
      * @return StringWrapper
      */
-    public function toLowerFirst(): StringWrapper
+    public function asUncapitalized(): StringWrapper
     {
         return new self(lcfirst($this->input));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAlphaNumeric(): bool
+    {
+        return ctype_alnum($this->input);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAlpha(): bool
+    {
+        return ctype_alpha($this->input);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isControl(): bool
+    {
+        return ctype_cntrl($this->input);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDigit(): bool
+    {
+        return ctype_digit($this->input);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLowerCase(): bool
+    {
+        return ctype_lower($this->input);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUpperCase(): bool
+    {
+        return ctype_upper($this->input);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPunctation(): bool
+    {
+        return ctype_punct($this->input);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSpace(): bool
+    {
+        return ctype_space($this->input);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHexaDecimal(): bool
+    {
+        return ctype_xdigit($this->input);
     }
 
     /**
