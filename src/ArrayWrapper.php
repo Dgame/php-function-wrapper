@@ -211,11 +211,27 @@ final class ArrayWrapper extends \ArrayObject
     }
 
     /**
-     * @return mixed
+     * @return Optional
      */
-    public function pop()
+    public function first(): Optional
     {
-        return array_pop($this->input);
+        return $this->at(0);
+    }
+
+    /**
+     * @return Optional
+     */
+    public function last(): Optional
+    {
+        return $this->at($this->length() - 1);
+    }
+
+    /**
+     * @return Optional
+     */
+    public function pop(): Optional
+    {
+        return maybe(array_pop($this->input));
     }
 
     /**
@@ -229,11 +245,11 @@ final class ArrayWrapper extends \ArrayObject
     }
 
     /**
-     * @return mixed
+     * @return Optional
      */
-    public function shift()
+    public function shift(): Optional
     {
-        return array_shift($this->input);
+        return maybe(array_shift($this->input));
     }
 
     /**

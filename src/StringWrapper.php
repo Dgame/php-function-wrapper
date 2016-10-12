@@ -44,7 +44,13 @@ final class StringWrapper
      */
     public function explode(string $delimeter, int $limit = null): ArrayWrapper
     {
-        return new ArrayWrapper(explode($delimeter, $this->input, $limit));
+        if ($limit !== null) {
+            $output = explode($delimeter, $this->input, $limit);
+        } else {
+            $output = explode($delimeter, $this->input);
+        }
+
+        return new ArrayWrapper($output);
     }
 
     /**
@@ -549,6 +555,22 @@ final class StringWrapper
     public function isNull(): bool
     {
         return $this->input === null;
+    }
+
+    /**
+     * @return NamespaceInfo
+     */
+    public function namespaceInfo(): NamespaceInfo
+    {
+        return new NamespaceInfo($this->input);
+    }
+
+    /**
+     * @return PathInfo
+     */
+    public function pathInfo(): PathInfo
+    {
+        return new PathInfo($this->input);
     }
 
     /**
