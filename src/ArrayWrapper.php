@@ -2,7 +2,10 @@
 
 namespace Dgame\Wrapper;
 
-use Dgame\Wrapper\Optional\Optional;
+use Dgame\Optional\Optional;
+use function Dgame\Optional\maybe;
+use function Dgame\Optional\none;
+use function Dgame\Optional\some;
 
 /**
  * Class ArrayWrapper
@@ -290,7 +293,7 @@ final class ArrayWrapper extends \ArrayObject
      */
     public function search($value): Optional
     {
-        return ($key = array_search($value, $this->input)) === false ? none() : some($key);
+        return maybe(array_search($value, $this->input));
     }
 
     /**

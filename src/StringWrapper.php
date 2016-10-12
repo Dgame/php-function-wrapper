@@ -2,7 +2,10 @@
 
 namespace Dgame\Wrapper;
 
-use Dgame\Wrapper\Optional\Optional;
+use Dgame\Optional\Optional;
+use function Dgame\Optional\maybe;
+use function Dgame\Optional\none;
+use function Dgame\Optional\some;
 
 /**
  * Class StringWrapper
@@ -342,7 +345,7 @@ final class StringWrapper
      */
     public function firstPositionOf(string $needle, int $offset = 0): Optional
     {
-        return ($pos = strpos($this->input, $needle, $offset)) === false ? none() : some($pos);
+        return maybe(strpos($this->input, $needle, $offset));
     }
 
     /**
@@ -353,7 +356,7 @@ final class StringWrapper
      */
     public function lastPositionOf(string $needle, int $offset = 0): Optional
     {
-        return ($pos = strrpos($this->input, $needle, $offset)) === false ? none() : some($pos);
+        return maybe(strrpos($this->input, $needle, $offset));
     }
 
     /**
@@ -481,7 +484,11 @@ final class StringWrapper
      */
     public function replaceInPlace(array $replacement): StringWrapper
     {
-        $this->input = str_replace(array_keys($replacement), array_values($replacement), $this->input);
+        $this->input = str_replace(
+            array_keys($replacement),
+            array_values($replacement),
+            $this->input
+        );
 
         return $this;
     }

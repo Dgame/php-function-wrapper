@@ -2,9 +2,6 @@
 
 namespace Dgame\Wrapper;
 
-use Dgame\Wrapper\Optional\None;
-use Dgame\Wrapper\Optional\Some;
-
 /**
  * @param string|null $input
  *
@@ -33,22 +30,4 @@ function chars(string $input): ArrayWrapper
 function assoc(array $input): ArrayWrapper
 {
     return new ArrayWrapper($input);
-}
-
-/**
- * @param $data
- *
- * @return Some
- */
-function some($data): Some
-{
-    return new Some($data);
-}
-
-/**
- * @return None
- */
-function none(): None
-{
-    return None::Instance();
 }
