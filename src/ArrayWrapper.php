@@ -363,6 +363,14 @@ final class ArrayWrapper extends \ArrayObject
     }
 
     /**
+     * @return bool
+     */
+    public function isNotEmpty(): bool
+    {
+        return !empty($this->input);
+    }
+
+    /**
      * @param int $n
      *
      * @return ArrayWrapper

@@ -563,9 +563,25 @@ final class StringWrapper
     /**
      * @return bool
      */
+    public function isNotEmpty(): bool
+    {
+        return !empty($this->input);
+    }
+
+    /**
+     * @return bool
+     */
     public function isNull(): bool
     {
         return $this->input === null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNotNull(): bool
+    {
+        return $this->input !== null;
     }
 
     /**
