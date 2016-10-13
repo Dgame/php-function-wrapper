@@ -65,13 +65,13 @@ final class StringWrapper
     }
 
     /**
-     * @param int $length
+     * @param int $size
      *
      * @return ArrayWrapper
      */
-    public function chunks(int $length): ArrayWrapper
+    public function chunks(int $size): ArrayWrapper
     {
-        return new ArrayWrapper(str_split($this->input, $length));
+        return new ArrayWrapper(str_split($this->input, $size));
     }
 
     /**
@@ -315,21 +315,21 @@ final class StringWrapper
      * @param string $needle
      * @param bool   $beforeNeedle
      *
-     * @return StringWrapper
+     * @return Optional
      */
-    public function fromFirstOccurrenceOf(string $needle, bool $beforeNeedle = false): StringWrapper
+    public function fromFirstOccurrenceOf(string $needle, bool $beforeNeedle = false): Optional
     {
-        return new self(strstr($this->input, $needle, $beforeNeedle));
+        return maybe(strstr($this->input, $needle, $beforeNeedle));
     }
 
     /**
      * @param string $needle
      *
-     * @return StringWrapper
+     * @return Optional
      */
-    public function fromLastOccurrenceOf(string $needle): StringWrapper
+    public function fromLastOccurrenceOf(string $needle): Optional
     {
-        return new self(strchr($this->input, $needle));
+        return maybe(strrchr($this->input, $needle));
     }
 
     /**
@@ -460,6 +460,20 @@ final class StringWrapper
     public function copy(): StringWrapper
     {
         return new self($this->input);
+    }
+
+    /**
+     * @param array $replacement
+     *
+     * @return StringWrapper
+     */
+    public function regexReplace(array $replacement): StringWrapper
+    {
+        foreach ($replacement as $pattern => $replace) {
+            $this->input = preg_replace($pattern, $replace, $this->input);
+        }
+
+        return $this;
     }
 
     /**
