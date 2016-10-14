@@ -44,4 +44,28 @@ class StringTest extends TestCase
     {
         $this->assertEquals('aaeeiioouuuss', string('áàèéìíóòùúûß')->toAscii());
     }
+
+    public function testBetween()
+    {
+        $this->assertEquals('Middle', string('StartMiddleEnd')->between('Start', 'End')->get());
+        $this->assertEquals('am', string('i am a slug')->between('i', 'a slug')->get());
+    }
+
+    public function testPopBack()
+    {
+        $this->assertEquals('foo/bar', string('foo/bar/baz')->popBack('/')->get());
+        $this->assertEquals('foo', string('foo/bar/baz')->popBack('/')->popBack('/')->get());
+    }
+
+    public function testPopFront()
+    {
+        $this->assertEquals('bar/baz', string('foo/bar/baz')->popFront('/')->get());
+        $this->assertEquals('baz', string('foo/bar/baz')->popFront('/')->popFront('/')->get());
+    }
+
+    public function testSlugify()
+    {
+        $this->assertEquals('my-new-post', string('My_nEw\\\/  @ post!!!')->slugify()->get());
+        $this->assertEquals('my_new_post', string('My nEw post!!!')->slugify('_')->get());
+    }
 }

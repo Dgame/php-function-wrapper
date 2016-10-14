@@ -188,6 +188,64 @@ final class StringWrapper
     }
 
     /**
+     * @param string $delimiter
+     *
+     * @return StringWrapper
+     */
+    public function slugify(string $delimiter = '-'): StringWrapper
+    {
+        return $this->copy()
+                    ->trim()
+                    ->regexReplace(['#[^a-z\d-]+#i' => ' '])
+                    ->regexReplace(['#\s+#' => $delimiter])
+                    ->toLowerCase()
+                    ->trim($delimiter);
+    }
+
+    /**
+     * @param string $left
+     * @param string $right
+     *
+     * @return StringWrapper
+     */
+    public function between(string $left, string $right): StringWrapper
+    {
+        if ($this->firstIndexOf($left)->isSome($i1) && $this->firstIndexOf($right)->isSome($i2)) {
+            $start = $i1 + strlen($left);
+
+            return $this->substring($start, $i2 - $start)->trim();
+        }
+
+        return new self();
+    }
+
+    /**
+     * @param string $delimiter
+     *
+     * @return StringWrapper
+     */
+    public function popFront(string $delimiter): StringWrapper
+    {
+        $result = $this->explode($delimiter)->reverse();
+        $result->pop();
+
+        return $result->reverse()->implode($delimiter);
+    }
+
+    /**
+     * @param string $delimiter
+     *
+     * @return StringWrapper
+     */
+    public function popBack(string $delimiter): StringWrapper
+    {
+        $result = $this->explode($delimiter);
+        $result->pop();
+
+        return $result->implode($delimiter);
+    }
+
+    /**
      * @return StringWrapper
      */
     public function toUpperCase(): StringWrapper
@@ -385,7 +443,7 @@ final class StringWrapper
      *
      * @return Optional
      */
-    public function firstOccurrenceOf(string $needle, int $offset = 0): Optional
+    public function firstIndexOf(string $needle, int $offset = 0): Optional
     {
         return maybe(strpos($this->input, $needle, $offset));
     }
@@ -396,7 +454,7 @@ final class StringWrapper
      *
      * @return Optional
      */
-    public function lastOccurrenceOf(string $needle, int $offset = 0): Optional
+    public function lastIndexOf(string $needle, int $offset = 0): Optional
     {
         return maybe(strrpos($this->input, $needle, $offset));
     }
@@ -408,7 +466,7 @@ final class StringWrapper
      */
     public function before(string $value): StringWrapper
     {
-        if ($this->firstOccurrenceOf($value)->isSome($index)) {
+        if ($this->firstIndexOf($value)->isSome($index)) {
             return $this->substring(0, $index);
         }
 
@@ -422,7 +480,7 @@ final class StringWrapper
      */
     public function after(string $value): StringWrapper
     {
-        if ($this->firstOccurrenceOf($value)->isSome($index)) {
+        if ($this->firstIndexOf($value)->isSome($index)) {
             return $this->substring($index + strlen($value));
         }
 
@@ -436,7 +494,7 @@ final class StringWrapper
      */
     public function from(string $value): StringWrapper
     {
-        if ($this->firstOccurrenceOf($value)->isSome($index)) {
+        if ($this->firstIndexOf($value)->isSome($index)) {
             return $this->substring($index);
         }
 
@@ -450,7 +508,7 @@ final class StringWrapper
      */
     public function until(string $value): StringWrapper
     {
-        if ($this->firstOccurrenceOf($value)->isSome($index)) {
+        if ($this->firstIndexOf($value)->isSome($index)) {
             return $this->substring(0, $index);
         }
 
@@ -558,7 +616,7 @@ final class StringWrapper
     public function replaceFirst(array $replacement): StringWrapper
     {
         foreach ($replacement as $needle => $replace) {
-            if ($this->firstOccurrenceOf($needle)->isSome($pos)) {
+            if ($this->firstIndexOf($needle)->isSome($pos)) {
                 $this->input = substr_replace($this->input, $replace, $pos, strlen($needle));
             }
         }
@@ -574,7 +632,7 @@ final class StringWrapper
     public function replaceLast(array $replacement): StringWrapper
     {
         foreach ($replacement as $needle => $replace) {
-            if ($this->lastOccurrenceOf($needle)->isSome($pos)) {
+            if ($this->lastIndexOf($needle)->isSome($pos)) {
                 $this->input = substr_replace($this->input, $replace, $pos, strlen($needle));
             }
         }
