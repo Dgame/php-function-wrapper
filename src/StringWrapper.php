@@ -65,6 +65,17 @@ final class StringWrapper
     }
 
     /**
+     * @param int         $length
+     * @param string|null $end
+     *
+     * @return StringWrapper
+     */
+    public function chunkSplit(int $length, string $end = null): StringWrapper
+    {
+        return new self(chunk_split($this->input, $length, $end));
+    }
+
+    /**
      * @param int $size
      *
      * @return ArrayWrapper
@@ -80,17 +91,6 @@ final class StringWrapper
     public function chars(): ArrayWrapper
     {
         return $this->chunks(1);
-    }
-
-    /**
-     * @param int         $length
-     * @param string|null $end
-     *
-     * @return StringWrapper
-     */
-    public function chunkSplit(int $length, string $end = null): StringWrapper
-    {
-        return new self(chunk_split($this->input, $length, $end));
     }
 
     /**
@@ -143,7 +143,7 @@ final class StringWrapper
      *
      * @return bool
      */
-    public function matches(string $pattern, array &$matches = []): bool
+    public function match(string $pattern, array &$matches = []): bool
     {
         return preg_match($pattern, $this->input, $matches) === 1;
     }
@@ -154,7 +154,7 @@ final class StringWrapper
     public function underscored(): StringWrapper
     {
         return $this->copy()
-                    ->collapseWhitespaces()
+                    ->regexReplace(['#\s+#' => ''])
                     ->regexReplace(['#\B([A-Z])#' => '_\1']);
     }
 
@@ -164,7 +164,7 @@ final class StringWrapper
     public function dasherize(): StringWrapper
     {
         return $this->copy()
-                    ->collapseWhitespaces()
+                    ->regexReplace(['#\s+#' => ''])
                     ->regexReplace(['#\B([A-Z])#' => '-\1']);
     }
 
@@ -177,14 +177,6 @@ final class StringWrapper
                     ->regexReplaceCallback('#[-_\.]([a-z])#i', function(array $matches) {
                         return ucfirst($matches[1][0]);
                     });
-    }
-
-    /**
-     * @return StringWrapper
-     */
-    public function collapseWhitespaces(): StringWrapper
-    {
-        return $this->copy()->regexReplace(['#\s+#' => '']);
     }
 
     /**
@@ -226,10 +218,10 @@ final class StringWrapper
      */
     public function popFront(string $delimiter): StringWrapper
     {
-        $result = $this->explode($delimiter)->reverse();
-        $result->pop();
+        $result = $this->explode($delimiter);
+        $result->popFront();
 
-        return $result->reverse()->implode($delimiter);
+        return $result->implode($delimiter);
     }
 
     /**
@@ -240,7 +232,7 @@ final class StringWrapper
     public function popBack(string $delimiter): StringWrapper
     {
         $result = $this->explode($delimiter);
-        $result->pop();
+        $result->popBack();
 
         return $result->implode($delimiter);
     }

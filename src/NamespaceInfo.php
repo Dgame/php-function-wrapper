@@ -25,7 +25,7 @@ final class NamespaceInfo
     public function __construct(string $namespace)
     {
         $info            = string($namespace)->explode('\\');
-        $this->class     = $info->pop()->unwrap();
+        $this->class     = $info->popBack()->unwrap();
         $ns              = $info->implode('\\');
         $this->namespace = $ns->isEmpty() ? null : $ns->get();
     }

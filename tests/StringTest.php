@@ -35,11 +35,6 @@ class StringTest extends TestCase
         $this->assertEquals('fooBarQuatz', string('foo bar quatz')->camelize()->get());
     }
 
-    public function testCollapseWhitespaces()
-    {
-        $this->assertEquals('foobarquatz', string(' foo     bar  quatz  ')->collapseWhitespaces()->get());
-    }
-
     public function testToAscii()
     {
         $this->assertEquals('aaeeiioouuuss', string('áàèéìíóòùúûß')->toAscii());

@@ -229,25 +229,15 @@ final class ArrayWrapper extends \ArrayObject
     /**
      * @return Optional
      */
-    public function pop(): Optional
+    public function popBack(): Optional
     {
         return maybe(array_pop($this->input));
     }
 
     /**
-     * @param $value
-     *
-     * @return int
-     */
-    public function push($value): int
-    {
-        return array_push($this->input, $value);
-    }
-
-    /**
      * @return Optional
      */
-    public function shift(): Optional
+    public function popFront(): Optional
     {
         return maybe(array_shift($this->input));
     }
@@ -257,7 +247,17 @@ final class ArrayWrapper extends \ArrayObject
      *
      * @return int
      */
-    public function unshift($value): int
+    public function pushBack($value): int
+    {
+        return array_push($this->input, $value);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return int
+     */
+    public function pushFront($value): int
     {
         return array_unshift($this->input, $value);
     }

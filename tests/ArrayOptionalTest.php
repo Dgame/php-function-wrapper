@@ -41,31 +41,31 @@ class ArrayOptionalTest extends TestCase
     {
         $assoc = assoc([1, 2, 3]);
 
-        $this->assertTrue($assoc->pop()->isSome($value));
+        $this->assertTrue($assoc->popBack()->isSome($value));
         $this->assertEquals(3, $value);
 
-        $this->assertTrue($assoc->pop()->isSome($value));
+        $this->assertTrue($assoc->popBack()->isSome($value));
         $this->assertEquals(2, $value);
 
-        $this->assertTrue($assoc->pop()->isSome($value));
+        $this->assertTrue($assoc->popBack()->isSome($value));
         $this->assertEquals(1, $value);
 
-        $this->assertTrue($assoc->pop()->isNone());
+        $this->assertTrue($assoc->popBack()->isNone());
     }
 
     public function testShift()
     {
         $assoc = assoc([1, 2, 3]);
 
-        $this->assertTrue($assoc->shift()->isSome($value));
+        $this->assertTrue($assoc->popFront()->isSome($value));
         $this->assertEquals(1, $value);
 
-        $this->assertTrue($assoc->shift()->isSome($value));
+        $this->assertTrue($assoc->popFront()->isSome($value));
         $this->assertEquals(2, $value);
 
-        $this->assertTrue($assoc->shift()->isSome($value));
+        $this->assertTrue($assoc->popFront()->isSome($value));
         $this->assertEquals(3, $value);
 
-        $this->assertTrue($assoc->shift()->isNone());
+        $this->assertTrue($assoc->popFront()->isNone());
     }
 }
