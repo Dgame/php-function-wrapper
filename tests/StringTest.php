@@ -29,10 +29,10 @@ class StringTest extends TestCase
 
     public function testCamelize()
     {
-        $this->assertEquals('fooBarQuatz', string('foo-bar-quatz')->camelize()->get());
-        $this->assertEquals('fooBarQuatz', string('foo_bar_quatz')->camelize()->get());
-        $this->assertEquals('fooBarQuatz', string('foo.bar.quatz')->camelize()->get());
-        $this->assertEquals('fooBarQuatz', string('foo bar quatz')->camelize()->get());
+        $this->assertEquals('fooBarQuatz', string(' foo-bar-quatz ')->camelize()->get());
+        $this->assertEquals('fooBarQuatz', string(' foo_bar_quatz ')->camelize()->get());
+        $this->assertEquals('fooBarQuatz', string(' foo.bar.quatz ')->camelize()->get());
+        $this->assertEquals('fooBarQuatz', string(' foo bar quatz ')->camelize()->get());
     }
 
     public function testToAscii()

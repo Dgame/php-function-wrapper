@@ -173,7 +173,9 @@ final class StringWrapper
      */
     public function camelize(): StringWrapper
     {
-        return $this->regexReplace(['#\s+#' => '_'])
+        return $this->copy()
+                    ->trim()
+                    ->regexReplace(['#\s+#' => '_'])
                     ->regexReplaceCallback('#[-_\.]([a-z])#i', function(array $matches) {
                         return ucfirst($matches[1][0]);
                     });
