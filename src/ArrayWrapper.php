@@ -51,29 +51,29 @@ final class ArrayWrapper extends \ArrayObject
     /**
      * @param int $times
      *
-     * @return array
+     * @return ArrayWrapper
      */
-    public function repeat(int $times): array
+    public function repeat(int $times): ArrayWrapper
     {
         $cycle = [];
         for ($i = 0; $i < $times; $i++) {
             $cycle = array_merge($this->input, $cycle);
         }
 
-        return $cycle;
+        return new self($cycle);
     }
 
     /**
-     * @return array
+     * @return ArrayWrapper
      */
-    public function group(): array
+    public function group(): ArrayWrapper
     {
         $result = [];
         foreach ($this->input as $key => $value) {
             $result[$value][$key] = $value;
         }
 
-        return array_values($result);
+        return new self(array_values($result));
     }
 
     /**

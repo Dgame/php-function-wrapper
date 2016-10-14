@@ -151,7 +151,46 @@ final class StringWrapper
     /**
      * @return StringWrapper
      */
-    public function asUpperCase(): StringWrapper
+    public function underscored(): StringWrapper
+    {
+        return $this->copy()
+                    ->collapseWhitespaces()
+                    ->regexReplace(['#\B([A-Z])#' => '_\1']);
+    }
+
+    /**
+     * @return StringWrapper
+     */
+    public function dasherize(): StringWrapper
+    {
+        return $this->copy()
+                    ->collapseWhitespaces()
+                    ->regexReplace(['#\B([A-Z])#' => '-\1']);
+    }
+
+    /**
+     * @return StringWrapper
+     */
+    public function camelize(): StringWrapper
+    {
+        return $this->regexReplace(['#\s+#' => '_'])
+                    ->regexReplaceCallback('#[-_\.]([a-z])#i', function(array $matches) {
+                        return ucfirst($matches[1][0]);
+                    });
+    }
+
+    /**
+     * @return StringWrapper
+     */
+    public function collapseWhitespaces(): StringWrapper
+    {
+        return $this->copy()->regexReplace(['#\s+#' => '']);
+    }
+
+    /**
+     * @return StringWrapper
+     */
+    public function toUpperCase(): StringWrapper
     {
         return new self(strtoupper($this->input));
     }
@@ -159,7 +198,7 @@ final class StringWrapper
     /**
      * @return StringWrapper
      */
-    public function asLowerCase(): StringWrapper
+    public function toLowerCase(): StringWrapper
     {
         return new self(strtolower($this->input));
     }
@@ -167,7 +206,7 @@ final class StringWrapper
     /**
      * @return StringWrapper
      */
-    public function asCapitalized(): StringWrapper
+    public function upperCaseFirst(): StringWrapper
     {
         return new self(ucfirst($this->input));
     }
@@ -175,9 +214,17 @@ final class StringWrapper
     /**
      * @return StringWrapper
      */
-    public function asUncapitalized(): StringWrapper
+    public function lowerCaseFirst(): StringWrapper
     {
         return new self(lcfirst($this->input));
+    }
+
+    /**
+     * @return string
+     */
+    public function toAscii(): string
+    {
+        return Unicode::Clean($this->input);
     }
 
     /**
@@ -477,17 +524,28 @@ final class StringWrapper
     }
 
     /**
+     * @param string   $pattern
+     * @param callable $callback
+     *
+     * @return StringWrapper
+     */
+    public function regexReplaceCallback(string $pattern, callable $callback): StringWrapper
+    {
+        $result = preg_replace_callback($pattern, $callback, $this->input);
+
+        return new self($result);
+    }
+
+    /**
      * @param array $replacement
      *
      * @return StringWrapper
      */
     public function replace(array $replacement): StringWrapper
     {
-        $this->input = str_replace(
-            array_keys($replacement),
-            array_values($replacement),
-            $this->input
-        );
+        foreach ($replacement as $search => $replace) {
+            $this->input = str_replace($search, $replace, $this->input);
+        }
 
         return $this;
     }
