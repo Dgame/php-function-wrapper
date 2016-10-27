@@ -320,4 +320,23 @@ class ArrayTest extends TestCase
                             assoc(['z' => 'a', 'y' => 'b', 'x' => 'c', 'w' => 'a', 'v' => 'd', 'u' => 'e'])->removeValue('a')->get()
         );
     }
+
+    public function testMapping()
+    {
+        $records = [
+            ['id' => 123, 'name' => 'foo', 'test' => 'a'],
+            ['id' => 124, 'name' => 'bar', 'test' => 'a'],
+            ['id' => 345, 'name' => 'quatz', 'test' => 'a'],
+        ];
+
+        $this->assertEquals([123 => 'foo', 124 => 'bar', 345 => 'quatz'], assoc($records)->mapping('id', 'name')->get());
+
+        $records = [
+            ['id' => 123, 'name' => 'foo', 'test' => 'a'],
+            ['id' => 123, 'name' => 'bar', 'test' => 'a'],
+            ['id' => 345, 'name' => 'quatz', 'test' => 'a'],
+        ];
+
+        $this->assertEquals([123 => 'bar', 345 => 'quatz'], assoc($records)->mapping('id', 'name')->get());
+    }
 }
