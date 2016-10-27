@@ -23,18 +23,10 @@ class ArrayOptionalTest extends TestCase
 
     public function testAt()
     {
-        $this->assertTrue(assoc([1, 2, 3])->at(1)->isSome($value));
+        $this->assertTrue(assoc([1, 2, 3])->valueOf(1)->isSome($value));
         $this->assertEquals(2, $value);
 
-        $this->assertTrue(assoc([1, 2, 3])->at(3)->isNone());
-    }
-
-    public function testFind()
-    {
-        $this->assertTrue(assoc([1, 2, 3])->find(2)->isSome($value));
-        $this->assertEquals(2, $value);
-
-        $this->assertTrue(assoc([1, 2, 3])->find(4)->isNone());
+        $this->assertTrue(assoc([1, 2, 3])->valueOf(3)->isNone());
     }
 
     public function testPop()

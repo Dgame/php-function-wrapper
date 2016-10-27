@@ -6,6 +6,7 @@ use Dgame\Optional\Optional;
 use function Dgame\Optional\maybe;
 use function Dgame\Optional\none;
 use function Dgame\Optional\some;
+use function Dgame\Type\typeof;
 
 /**
  * Class ArrayWrapper
@@ -49,31 +50,39 @@ final class ArrayWrapper extends \ArrayObject
     }
 
     /**
-     * @param int $times
+     * @param bool $preserveKeys
      *
      * @return ArrayWrapper
      */
-    public function repeat(int $times): ArrayWrapper
-    {
-        $cycle = [];
-        for ($i = 0; $i < $times; $i++) {
-            $cycle = array_merge($this->input, $cycle);
-        }
-
-        return new self($cycle);
-    }
-
-    /**
-     * @return ArrayWrapper
-     */
-    public function group(): ArrayWrapper
+    public function groupValues(bool $preserveKeys = false): ArrayWrapper
     {
         $result = [];
         foreach ($this->input as $key => $value) {
-            $result[$value][$key] = $value;
+            if ($preserveKeys) {
+                $result[$value][$key] = $value;
+            } else {
+                $result[$value][] = $value;
+            }
         }
 
         return new self(array_values($result));
+    }
+
+    /**
+     * @param $key
+     *
+     * @return ArrayWrapper
+     */
+    public function groupByKey($key): ArrayWrapper
+    {
+        $output = [];
+        foreach ($this->input as $value) {
+            if (assoc($value)->valueOf($key)->isSome($item)) {
+                $output[$item] = $value;
+            }
+        }
+
+        return new self($output);
     }
 
     /**
@@ -89,13 +98,13 @@ final class ArrayWrapper extends \ArrayObject
 
     /**
      * @param      $column
-     * @param null $indexKey
+     * @param null $key
      *
      * @return ArrayWrapper
      */
-    public function columns($column, $indexKey = null): ArrayWrapper
+    public function column($column, $key = null): ArrayWrapper
     {
-        return new self(array_column($this->input, $column, $indexKey));
+        return new self(array_column($this->input, $column, $key));
     }
 
     /**
@@ -181,13 +190,11 @@ final class ArrayWrapper extends \ArrayObject
     }
 
     /**
-     * @param mixed|null $key
-     *
      * @return ArrayWrapper
      */
-    public function keys($key = null): ArrayWrapper
+    public function keys(): ArrayWrapper
     {
-        return new self(array_keys($this->input, $key));
+        return new self(array_keys($this->input));
     }
 
     /**
@@ -215,7 +222,7 @@ final class ArrayWrapper extends \ArrayObject
      */
     public function first(): Optional
     {
-        return $this->at(0);
+        return $this->valueOf(0);
     }
 
     /**
@@ -223,7 +230,7 @@ final class ArrayWrapper extends \ArrayObject
      */
     public function last(): Optional
     {
-        return $this->at($this->length() - 1);
+        return $this->valueOf($this->length() - 1);
     }
 
     /**
@@ -299,7 +306,22 @@ final class ArrayWrapper extends \ArrayObject
      */
     public function search($value): Optional
     {
-        return maybe(array_search($value, $this->input));
+        $key = array_search($value, $this->input);
+        if ($key !== false) {
+            return some($key);
+        }
+
+        return none();
+    }
+
+    /**
+     * @param $value
+     *
+     * @return array
+     */
+    public function searchAll($value): array
+    {
+        return array_keys($this->input, $value);
     }
 
     /**
@@ -313,6 +335,72 @@ final class ArrayWrapper extends \ArrayObject
     }
 
     /**
+     * @param      $key
+     * @param null $value
+     *
+     * @return ArrayWrapper
+     */
+    public function removeKey($key, &$value = null): ArrayWrapper
+    {
+        if ($this->hasKey($key)) {
+            $value = $this->input[$key];
+            unset($this->input[$key]);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return ArrayWrapper
+     */
+    public function removeValue($value): ArrayWrapper
+    {
+        foreach ($this->searchAll($value) as $key) {
+            unset($this->input[$key]);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayWrapper
+     */
+    public function flatten(): ArrayWrapper
+    {
+        $output = [];
+        foreach ($this->input as $value) {
+            if (typeof($value)->isArray()) {
+                $output = array_merge($output, assoc($value)->flatten()->get());
+            } else {
+                $output[] = $value;
+            }
+        }
+
+        return new self($output);
+    }
+
+    /**
+     * @param $lhs
+     * @param $rhs
+     *
+     * @return ArrayWrapper
+     */
+    public function mapping($lhs, $rhs): ArrayWrapper
+    {
+        $output = [];
+        foreach ($this->input as $value) {
+            $assoc = new self($value);
+            if ($assoc->valueOf($lhs)->isSome($key) && $assoc->valueOf($rhs)->isSome($item)) {
+                $output[$key] = $item;
+            }
+        }
+
+        return new self($output);
+    }
+
+    /**
      * @return ArrayWrapper
      */
     public function unique(): ArrayWrapper
@@ -321,15 +409,33 @@ final class ArrayWrapper extends \ArrayObject
     }
 
     /**
-     * @param int      $offset
-     * @param int|null $length
-     * @param bool     $preserveKeys
+     * @param int $lhs
+     * @param int $rhs
      *
      * @return ArrayWrapper
      */
-    public function slice(int $offset, int $length = null, bool $preserveKeys = false): ArrayWrapper
+    public function slice(int $lhs, int $rhs): ArrayWrapper
     {
-        return new self(array_slice($this->input, $offset, $length ?? $this->length(), $preserveKeys));
+        return $this->range($lhs, $rhs - $lhs);
+    }
+
+    /**
+     * @param int      $offset
+     * @param int|null $length
+     *
+     * @return ArrayWrapper
+     */
+    public function range(int $offset, int $length = null): ArrayWrapper
+    {
+        return new self(array_slice($this->input, $offset, $length ?? $this->length()));
+    }
+
+    /**
+     * @return ArrayWrapper
+     */
+    public function flip(): ArrayWrapper
+    {
+        return new self(array_flip($this->input));
     }
 
     /**
@@ -339,7 +445,7 @@ final class ArrayWrapper extends \ArrayObject
      *
      * @return ArrayWrapper
      */
-    public function splice(int $offset, int $length = 0, array $replacement = []): ArrayWrapper
+    public function replacePart(int $offset, int $length = 0, array $replacement = []): ArrayWrapper
     {
         $this->input = array_splice($this->input, $offset, $length, $replacement);
 
@@ -355,19 +461,13 @@ final class ArrayWrapper extends \ArrayObject
     }
 
     /**
-     * @return bool
+     * @param array $keys
+     *
+     * @return ArrayWrapper
      */
-    public function isEmpty(): bool
+    public function only(array $keys): ArrayWrapper
     {
-        return empty($this->input);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isNotEmpty(): bool
-    {
-        return !empty($this->input);
+        return new self(array_intersect_key($this->input, assoc($keys)->flip()->get()));
     }
 
     /**
@@ -377,7 +477,7 @@ final class ArrayWrapper extends \ArrayObject
      */
     public function take(int $n): ArrayWrapper
     {
-        return $this->slice(0, $n);
+        return new self(array_slice($this->input, 0, $n));
     }
 
     /**
@@ -387,7 +487,7 @@ final class ArrayWrapper extends \ArrayObject
      */
     public function skip(int $n): ArrayWrapper
     {
-        return $this->slice($n);
+        return new self(array_slice($this->input, $n));
     }
 
     /**
@@ -427,6 +527,40 @@ final class ArrayWrapper extends \ArrayObject
     }
 
     /**
+     * @param callable $callback
+     *
+     * @return ArrayWrapper
+     */
+    public function takeIf(callable $callback): ArrayWrapper
+    {
+        $output = [];
+        foreach ($this->input as $key => $value) {
+            if ($callback($value)) {
+                $output[$key] = $value;
+            }
+        }
+
+        return new self($output);
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return ArrayWrapper
+     */
+    public function skipIf(callable $callback): ArrayWrapper
+    {
+        $output = [];
+        foreach ($this->input as $key => $value) {
+            if (!$callback($value)) {
+                $output[$key] = $value;
+            }
+        }
+
+        return new self($output);
+    }
+
+    /**
      * @param $left
      * @param $right
      *
@@ -434,12 +568,12 @@ final class ArrayWrapper extends \ArrayObject
      */
     public function between($left, $right): ArrayWrapper
     {
-        if ($this->indexOf($left)->isSome($offset)) {
-            if ($this->indexOf($right)->isSome($length)) {
-                return $this->slice($offset + 1, $length - $offset - 1);
+        if ($this->indexOf($left)->isSome($lhs)) {
+            if ($this->indexOf($right)->isSome($rhs)) {
+                return $this->slice($lhs + 1, $rhs);
             }
 
-            return $this->skip($offset + 1);
+            return $this->skip($lhs + 1);
         }
 
         return new self([]);
@@ -520,7 +654,7 @@ final class ArrayWrapper extends \ArrayObject
      *
      * @return Optional
      */
-    public function at($key): Optional
+    public function valueOf($key): Optional
     {
         if ($this->hasKey($key)) {
             return some($this->input[$key]);
@@ -530,34 +664,33 @@ final class ArrayWrapper extends \ArrayObject
     }
 
     /**
-     * @param $value
-     *
-     * @return Optional
+     * @return bool
      */
-    public function find($value): Optional
+    public function isAssociative(): bool
     {
-        if ($this->search($value)->isSome($key)) {
-            return some($this->input[$key]);
-        }
-
-        return none();
+        return !$this->isIndexed();
     }
 
     /**
-     * @param callable $callback
-     *
-     * @return array
+     * @return bool
      */
-    public function findBy(callable $callback): array
+    public function isIndexed(): bool
     {
-        $results = [];
-        foreach ($this->input as $key => $value) {
-            if ($callback($value, $key)) {
-                $results[$key] = $value;
+        foreach ($this->input as $key => $_) {
+            if (!is_int($key)) {
+                return false;
             }
         }
 
-        return $results;
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isConsecutive(): bool
+    {
+        return $this->isEqualTo(range(0, $this->length()));
     }
 
     /**
@@ -648,5 +781,21 @@ final class ArrayWrapper extends \ArrayObject
     public function isEqualTo(array $input): bool
     {
         return $this->input === $input;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmpty(): bool
+    {
+        return empty($this->input);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNotEmpty(): bool
+    {
+        return !empty($this->input);
     }
 }

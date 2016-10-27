@@ -33,10 +33,10 @@ final class PathInfo
     public function __construct(string $path)
     {
         $info = assoc(pathinfo($path));
-        $info->at('dirname')->isSome($this->dirname);
-        $info->at('filename')->isSome($this->filename);
-        $info->at('basename')->isSome($this->basename);
-        $info->at('extension')->isSome($this->extension);
+        $info->valueOf('dirname')->isSome($this->dirname);
+        $info->valueOf('filename')->isSome($this->filename);
+        $info->valueOf('basename')->isSome($this->basename);
+        $info->valueOf('extension')->isSome($this->extension);
     }
 
     /**
