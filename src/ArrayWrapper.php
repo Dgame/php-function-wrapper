@@ -56,16 +56,16 @@ final class ArrayWrapper extends \ArrayObject
      */
     public function groupValues(bool $preserveKeys = false): ArrayWrapper
     {
-        $result = [];
+        $output = [];
         foreach ($this->input as $key => $value) {
             if ($preserveKeys) {
-                $result[$value][$key] = $value;
+                $output[$value][$key] = $value;
             } else {
-                $result[$value][] = $value;
+                $output[$value][] = $value;
             }
         }
 
-        return new self(array_values($result));
+        return new self(array_values($output));
     }
 
     /**
