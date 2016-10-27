@@ -306,12 +306,7 @@ final class ArrayWrapper extends \ArrayObject
      */
     public function search($value): Optional
     {
-        $key = array_search($value, $this->input);
-        if ($key !== false) {
-            return some($key);
-        }
-
-        return none();
+        return maybe(array_search($value, $this->input));
     }
 
     /**
