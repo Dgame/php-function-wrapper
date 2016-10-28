@@ -120,7 +120,7 @@ class ArrayTest extends TestCase
         );
     }
 
-    public function testFold()
+    public function testReduce()
     {
         $sum1 = function($sum, int $a) {
             return $sum + $a;
