@@ -6,6 +6,14 @@ use function Dgame\Wrapper\chars;
 
 class ArrayTest extends TestCase
 {
+    public function testValueOf()
+    {
+        $this->assertTrue(assoc(['id' => '123', 'data' => 'foo'])->valueOf('data')->isSome($value));
+        $this->assertEquals('foo', $value);
+        $this->assertTrue(assoc(['id' => '123', 'data' => 'foo'])->valueOf('foo')->isNone());
+        $this->assertEquals(0, assoc(['id' => '123', 'data' => 'foo'])->valueOf('foo')->default(0));
+    }
+
     public function testColumn()
     {
         $data = [
@@ -122,11 +130,11 @@ class ArrayTest extends TestCase
 
     public function testReduce()
     {
-        $sum1 = function($sum, int $a) {
+        $sum1 = function ($sum, int $a) {
             return $sum + $a;
         };
 
-        $sum2 = function(int $sum, int $a) {
+        $sum2 = function (int $sum, int $a) {
             return $sum + $a;
         };
 
@@ -136,7 +144,7 @@ class ArrayTest extends TestCase
 
     public function testTakeWhile()
     {
-        $belowTen = function(int $item) {
+        $belowTen = function (int $item) {
             return $item < 10;
         };
 
@@ -145,7 +153,7 @@ class ArrayTest extends TestCase
 
     public function testTakeIf()
     {
-        $inRange = function(int $item) {
+        $inRange = function (int $item) {
             return $item > 3 && $item < 10;
         };
 
@@ -157,7 +165,7 @@ class ArrayTest extends TestCase
 
     public function testSkipWhile()
     {
-        $belowTen = function(int $item) {
+        $belowTen = function (int $item) {
             return $item < 10;
         };
 
@@ -166,7 +174,7 @@ class ArrayTest extends TestCase
 
     public function testSkipIf()
     {
-        $inRange = function(int $item) {
+        $inRange = function (int $item) {
             return $item > 3 && $item < 10;
         };
 
@@ -244,7 +252,7 @@ class ArrayTest extends TestCase
 
     public function testAll()
     {
-        $positive = function(int $item) {
+        $positive = function (int $item) {
             return $item >= 0;
         };
 
@@ -254,7 +262,7 @@ class ArrayTest extends TestCase
 
     public function testAny()
     {
-        $positive = function(int $item) {
+        $positive = function (int $item) {
             return $item > 0;
         };
 
