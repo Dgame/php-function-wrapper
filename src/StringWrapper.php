@@ -272,11 +272,11 @@ final class StringWrapper
     }
 
     /**
-     * @return string
+     * @return StringWrapper
      */
-    public function toAscii(): string
+    public function toAscii(): StringWrapper
     {
-        return Unicode::Clean($this->input);
+        return new self(Unicode::Clean($this->input));
     }
 
     /**
@@ -400,14 +400,25 @@ final class StringWrapper
     }
 
     /**
-     * @param int      $start
+     * @param int $lhs
+     * @param int $rhs
+     *
+     * @return StringWrapper
+     */
+    public function slice(int $lhs, int $rhs): StringWrapper
+    {
+        return $this->substring($lhs, $rhs - $lhs);
+    }
+
+    /**
+     * @param int      $offset
      * @param int|null $length
      *
      * @return StringWrapper
      */
-    public function substring(int $start, int $length = null): StringWrapper
+    public function substring(int $offset, int $length = null): StringWrapper
     {
-        return new self(substr($this->input, $start, $length ?? $this->length()));
+        return new self(substr($this->input, $offset, $length ?? $this->length()));
     }
 
     /**

@@ -37,7 +37,7 @@ class StringTest extends TestCase
 
     public function testToAscii()
     {
-        $this->assertEquals('aaeeiioouuuss', string('áàèéìíóòùúûß')->toAscii());
+        $this->assertEquals('aaeeiioouuuss', string('áàèéìíóòùúûß')->toAscii()->get());
     }
 
     public function testBetween()
@@ -62,5 +62,15 @@ class StringTest extends TestCase
     {
         $this->assertEquals('my-new-post', string('My_nEw\\\/  @ post!!!')->slugify()->get());
         $this->assertEquals('my_new_post', string('My nEw post!!!')->slugify('_')->get());
+    }
+
+    public function testSlice()
+    {
+        $this->assertEquals('oBar', string('FooBarQuatz')->slice(2, 6)->get());
+    }
+
+    public function testSubstring()
+    {
+        $this->assertEquals('oBar', string('FooBarQuatz')->substring(2, 4)->get());
     }
 }
