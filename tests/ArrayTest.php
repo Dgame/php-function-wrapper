@@ -130,11 +130,11 @@ class ArrayTest extends TestCase
 
     public function testReduce()
     {
-        $sum1 = function ($sum, int $a) {
+        $sum1 = function($sum, int $a) {
             return $sum + $a;
         };
 
-        $sum2 = function (int $sum, int $a) {
+        $sum2 = function(int $sum, int $a) {
             return $sum + $a;
         };
 
@@ -144,7 +144,7 @@ class ArrayTest extends TestCase
 
     public function testTakeWhile()
     {
-        $belowTen = function (int $item) {
+        $belowTen = function(int $item) {
             return $item < 10;
         };
 
@@ -153,7 +153,7 @@ class ArrayTest extends TestCase
 
     public function testTakeIf()
     {
-        $inRange = function (int $item) {
+        $inRange = function(int $item) {
             return $item > 3 && $item < 10;
         };
 
@@ -165,7 +165,7 @@ class ArrayTest extends TestCase
 
     public function testSkipWhile()
     {
-        $belowTen = function (int $item) {
+        $belowTen = function(int $item) {
             return $item < 10;
         };
 
@@ -174,7 +174,7 @@ class ArrayTest extends TestCase
 
     public function testSkipIf()
     {
-        $inRange = function (int $item) {
+        $inRange = function(int $item) {
             return $item > 3 && $item < 10;
         };
 
@@ -252,7 +252,7 @@ class ArrayTest extends TestCase
 
     public function testAll()
     {
-        $positive = function (int $item) {
+        $positive = function(int $item) {
             return $item >= 0;
         };
 
@@ -262,7 +262,7 @@ class ArrayTest extends TestCase
 
     public function testAny()
     {
-        $positive = function (int $item) {
+        $positive = function(int $item) {
             return $item > 0;
         };
 
@@ -346,5 +346,18 @@ class ArrayTest extends TestCase
         ];
 
         $this->assertEquals([123 => 'bar', 345 => 'quatz'], assoc($records)->mapping('id', 'name')->get());
+    }
+
+    public function testBasic()
+    {
+        $records = [
+            ['id' => 123, 'name' => 'foo', 'test' => 'a'],
+            ['id' => 124, 'name' => 'bar', 'test' => 'a'],
+            ['id' => 345, 'name' => 'quatz', 'test' => 'a'],
+        ];
+
+        $this->assertEquals(['id' => 123, 'name' => 'foo', 'test' => 'a'], assoc($records)[0]);
+        $this->assertEquals(['id' => 124, 'name' => 'bar', 'test' => 'a'], assoc($records)[1]);
+        $this->assertEquals(['id' => 345, 'name' => 'quatz', 'test' => 'a'], assoc($records)[2]);
     }
 }

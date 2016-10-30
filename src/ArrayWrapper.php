@@ -2,7 +2,10 @@
 
 namespace Dgame\Wrapper;
 
+use ArrayAccess;
+use ArrayIterator;
 use Dgame\Optional\Optional;
+use IteratorAggregate;
 use function Dgame\Optional\maybe;
 use function Dgame\Optional\none;
 use function Dgame\Optional\some;
@@ -12,7 +15,7 @@ use function Dgame\Type\typeof;
  * Class ArrayWrapper
  * @package Dgame\Wrapper
  */
-final class ArrayWrapper extends \ArrayObject
+final class ArrayWrapper implements ArrayAccess, IteratorAggregate
 {
     /**
      * @var array
@@ -26,8 +29,6 @@ final class ArrayWrapper extends \ArrayObject
      */
     public function __construct(array $input)
     {
-        parent::__construct($input);
-
         $this->input = $input;
     }
 
@@ -37,6 +38,14 @@ final class ArrayWrapper extends \ArrayObject
     public function get(): array
     {
         return $this->input;
+    }
+
+    /**
+     * @return ArrayIterator
+     */
+    public function getIterator(): ArrayIterator
+    {
+        return new ArrayIterator($this->input);
     }
 
     /**
@@ -206,15 +215,13 @@ final class ArrayWrapper extends \ArrayObject
     }
 
     /**
-     * @param array[] ...$input
+     * @param array[] ...$args
      *
      * @return ArrayWrapper
      */
-    public function mergeWith(array ...$input): ArrayWrapper
+    public function merge(array ...$args): ArrayWrapper
     {
-        $this->input = array_merge($this->input, ...$input);
-
-        return $this;
+        return new self(array_merge($this->input, ...$args));
     }
 
     /**
@@ -792,5 +799,46 @@ final class ArrayWrapper extends \ArrayObject
     public function isNotEmpty(): bool
     {
         return !empty($this->input);
+    }
+
+    /**
+     * @param mixed $key
+     *
+     * @return bool
+     */
+    public function offsetExists($key)
+    {
+        return $this->hasKey($key);
+    }
+
+    /**
+     * @param mixed $key
+     *
+     * @return mixed
+     */
+    public function offsetGet($key)
+    {
+        return $this->valueOf($key)->default(null);
+    }
+
+    /**
+     * @param mixed $key
+     * @param mixed $value
+     */
+    public function offsetSet($key, $value)
+    {
+        if ($key === null) {
+            $this->input[] = $value;
+        } else {
+            $this->input[$key] = $value;
+        }
+    }
+
+    /**
+     * @param mixed $key
+     */
+    public function offsetUnset($key)
+    {
+        unset($this->input[$key]);
     }
 }
