@@ -31,3 +31,13 @@ function assoc(array $input): ArrayWrapper
 {
     return new ArrayWrapper($input);
 }
+
+/**
+ * @param object|string $object
+ *
+ * @return ObjectWrapper
+ */
+function object($object): ObjectWrapper
+{
+    return new ObjectWrapper($object);
+}
