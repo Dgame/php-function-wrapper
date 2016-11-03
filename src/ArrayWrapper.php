@@ -441,6 +441,26 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     }
 
     /**
+     * @param \array[] ...$other
+     *
+     * @return ArrayWrapper
+     */
+    public function diff(array ...$other): ArrayWrapper
+    {
+        return new self(array_diff($this->input, ...$other));
+    }
+
+    /**
+     * @param \array[] ...$other
+     *
+     * @return ArrayWrapper
+     */
+    public function diffAssoc(array ...$other): ArrayWrapper
+    {
+        return new self(array_diff_assoc($this->input, ...$other));
+    }
+
+    /**
      * @param int   $offset
      * @param int   $length
      * @param array $replacement
