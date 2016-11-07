@@ -678,6 +678,29 @@ final class StringWrapper
     }
 
     /**
+     * @param string   $input
+     * @param int|null $percent
+     *
+     * @return int
+     */
+    public function similarity(string $input, int &$percent = null): int
+    {
+        return similar_text($this->input, $input, $percent);
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return StringWrapper
+     */
+    public function apply(callable $callback): StringWrapper
+    {
+        $this->input = $callback($this->input);
+
+        return $this;
+    }
+
+    /**
      * @param string $input
      *
      * @return bool

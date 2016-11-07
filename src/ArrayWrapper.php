@@ -796,6 +796,18 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     }
 
     /**
+     * @param callable $callback
+     *
+     * @return ArrayWrapper
+     */
+    public function apply(callable $callback): ArrayWrapper
+    {
+        $this->input = $callback($this->input);
+
+        return $this;
+    }
+
+    /**
      * @param array $input
      *
      * @return bool
