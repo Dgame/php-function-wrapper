@@ -695,7 +695,10 @@ final class StringWrapper
      */
     public function apply(callable $callback): StringWrapper
     {
-        $this->input = $callback($this->input);
+        $result = $callback($this->input);
+        if (is_string($result)) {
+            $this->input = $result;
+        }
 
         return $this;
     }

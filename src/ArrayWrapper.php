@@ -9,7 +9,6 @@ use IteratorAggregate;
 use function Dgame\Optional\maybe;
 use function Dgame\Optional\none;
 use function Dgame\Optional\some;
-use function Dgame\Type\typeof;
 
 /**
  * Class ArrayWrapper
@@ -372,11 +371,11 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     public function flatten(): ArrayWrapper
     {
         $output = [];
-        foreach ($this->input as $value) {
-            if (typeof($value)->isArray()) {
+        foreach ($this->input as $key => $value) {
+            if (is_array($value)) {
                 $output = array_merge($output, assoc($value)->flatten()->get());
             } else {
-                $output[] = $value;
+                $output[$key] = $value;
             }
         }
 
@@ -802,7 +801,10 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
      */
     public function apply(callable $callback): ArrayWrapper
     {
-        $this->input = $callback($this->input);
+        $result = $callback($this->input);
+        if (is_array($result)) {
+            $this->input = $result;
+        }
 
         return $this;
     }

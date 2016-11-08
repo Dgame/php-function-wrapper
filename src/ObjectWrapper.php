@@ -3,7 +3,6 @@
 namespace Dgame\Wrapper;
 
 use ReflectionClass;
-use function Dgame\Type\typeof;
 
 /**
  * Class ObjectWrapper
@@ -33,11 +32,10 @@ final class ObjectWrapper
      */
     public function __construct($object)
     {
-        $type = typeof($object);
-        if ($type->isObject()) {
-            $this->class  = $type->getName();
+        if (is_object($object)) {
+            $this->class  = get_class($object);
             $this->object = $object;
-        } else if ($type->isString() && class_exists($object)) {
+        } else if (is_string($object) && class_exists($object)) {
             $this->class  = $object;
             $this->object = $this->getObject();
         } else {
