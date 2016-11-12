@@ -2,6 +2,9 @@
 
 namespace Dgame\Wrapper;
 
+use Dgame\Optional\Optional;
+use function Dgame\Optional\maybe;
+
 /**
  * Class NamespaceInfo
  * @package Dgame\Wrapper
@@ -9,11 +12,11 @@ namespace Dgame\Wrapper;
 final class NamespaceInfo
 {
     /**
-     * @var string|null
+     * @var Optional
      */
     private $namespace;
     /**
-     * @var string|null
+     * @var Optional
      */
     private $class;
 
@@ -24,24 +27,26 @@ final class NamespaceInfo
      */
     public function __construct(string $namespace)
     {
-        $info            = string($namespace)->explode('\\');
-        $this->class     = $info->popBack()->unwrap();
-        $ns              = $info->implode('\\');
-        $this->namespace = $ns->isEmpty() ? null : $ns->get();
+        $info = string($namespace)->explode('\\');
+
+        $this->class     = $info->popBack();
+        $this->namespace = maybe($info->implode('\\')->get(), function (string $namespace) {
+            return !empty($namespace);
+        });
     }
 
     /**
-     * @return string|null
+     * @return Optional
      */
-    public function getNamespace()
+    public function getNamespace(): Optional
     {
         return $this->namespace;
     }
 
     /**
-     * @return string|null
+     * @return Optional
      */
-    public function getClass()
+    public function getClass(): Optional
     {
         return $this->class;
     }

@@ -9,24 +9,28 @@ class NamespaceInfoTest extends TestCase
     {
         $ns = string(static::class)->namespaceInfo();
 
-        $this->assertEquals('NamespaceInfoTest', $ns->getClass());
-        $this->assertEquals(static::class, $ns->getClass());
-        $this->assertNull($ns->getNamespace());
+        $this->assertTrue($ns->getClass()->isSome($class));
+        $this->assertEquals('NamespaceInfoTest', $class);
+        $this->assertEquals(static::class, $class);
+        $this->assertTrue($ns->getNamespace()->isNone());
     }
 
     public function testExternalClass()
     {
         $ns = string('\Exception')->namespaceInfo();
 
-        $this->assertEquals('Exception', $ns->getClass());
-        $this->assertNull($ns->getNamespace());
+        $this->assertTrue($ns->getClass()->isSome($class));
+        $this->assertEquals('Exception', $class);
+        $this->assertTrue($ns->getNamespace()->isNone());
     }
 
     public function testNamespace()
     {
         $ns = string(TestCase::class)->namespaceInfo();
 
-        $this->assertEquals('TestCase', $ns->getClass());
-        $this->assertEquals('PHPUnit\Framework', $ns->getNamespace());
+        $this->assertTrue($ns->getClass()->isSome($class));
+        $this->assertEquals('TestCase', $class);
+        $this->assertTrue($ns->getNamespace()->isSome($namespace));
+        $this->assertEquals('PHPUnit\Framework', $namespace);
     }
 }

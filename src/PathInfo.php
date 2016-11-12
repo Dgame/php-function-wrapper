@@ -2,6 +2,8 @@
 
 namespace Dgame\Wrapper;
 
+use Dgame\Optional\Optional;
+
 /**
  * Class PathInfo
  * @package Dgame\Wrapper
@@ -9,19 +11,19 @@ namespace Dgame\Wrapper;
 final class PathInfo
 {
     /**
-     * @var string|null
+     * @var Optional
      */
     private $dirname;
     /**
-     * @var string|null
+     * @var Optional
      */
     private $filename;
     /**
-     * @var string|null
+     * @var Optional
      */
     private $basename;
     /**
-     * @var string|null
+     * @var Optional
      */
     private $extension;
 
@@ -33,40 +35,41 @@ final class PathInfo
     public function __construct(string $path)
     {
         $info = assoc(pathinfo($path));
-        $info->valueOf('dirname')->isSome($this->dirname);
-        $info->valueOf('filename')->isSome($this->filename);
-        $info->valueOf('basename')->isSome($this->basename);
-        $info->valueOf('extension')->isSome($this->extension);
+
+        $this->dirname   = $info->valueOf('dirname');
+        $this->filename  = $info->valueOf('filename');
+        $this->basename  = $info->valueOf('basename');
+        $this->extension = $info->valueOf('extension');
     }
 
     /**
-     * @return null|string
+     * @return Optional
      */
-    public function getDirname()
+    public function getDirname(): Optional
     {
         return $this->dirname;
     }
 
     /**
-     * @return null|string
+     * @return Optional
      */
-    public function getFilename()
+    public function getFilename(): Optional
     {
         return $this->filename;
     }
 
     /**
-     * @return null|string
+     * @return Optional
      */
-    public function getBasename()
+    public function getBasename(): Optional
     {
         return $this->basename;
     }
 
     /**
-     * @return null|string
+     * @return Optional
      */
-    public function getExtension()
+    public function getExtension(): Optional
     {
         return $this->extension;
     }
