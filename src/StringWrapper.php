@@ -258,7 +258,7 @@ final class StringWrapper
     /**
      * @return StringWrapper
      */
-    public function upperCaseFirst(): StringWrapper
+    public function toUpperCaseFirst(): StringWrapper
     {
         return new self(ucfirst($this->input));
     }
@@ -266,7 +266,7 @@ final class StringWrapper
     /**
      * @return StringWrapper
      */
-    public function lowerCaseFirst(): StringWrapper
+    public function toLowerCaseFirst(): StringWrapper
     {
         return new self(lcfirst($this->input));
     }
