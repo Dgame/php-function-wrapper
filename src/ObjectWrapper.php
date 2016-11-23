@@ -37,7 +37,6 @@ final class ObjectWrapper
             $this->object = $object;
         } else if (is_string($object) && class_exists($object)) {
             $this->class  = $object;
-            $this->object = $this->getObject();
         } else {
             throw new \Exception('$object must be either a valid object or an existing class name');
         }
@@ -61,11 +60,11 @@ final class ObjectWrapper
     }
 
     /**
-     * @return string
+     * @return StringWrapper
      */
-    public function getClass(): string
+    public function getClass(): StringWrapper
     {
-        return $this->class;
+        return new StringWrapper($this->class);
     }
 
     /**
@@ -87,7 +86,7 @@ final class ObjectWrapper
      */
     public function hasMethod(string $method): bool
     {
-        return method_exists($this->object, $method);
+        return method_exists($this->class, $method);
     }
 
     /**
@@ -98,7 +97,7 @@ final class ObjectWrapper
      */
     public function invoke(string $method, ...$args)
     {
-        return call_user_func_array([$this->object, $method], $args);
+        return call_user_func_array([$this->getObject(), $method], $args);
     }
 
     /**
