@@ -96,7 +96,7 @@ final class ObjectWrapper
      *
      * @return mixed
      */
-    public function call(string $method, ...$args)
+    public function invoke(string $method, ...$args)
     {
         return call_user_func_array([$this->object, $method], $args);
     }

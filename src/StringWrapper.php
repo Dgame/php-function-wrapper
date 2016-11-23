@@ -59,7 +59,7 @@ final class StringWrapper
      *
      * @return ArrayWrapper
      */
-    public function split(string $pattern, int $limit = null): ArrayWrapper
+    public function pregSplit(string $pattern, int $limit = null): ArrayWrapper
     {
         return new ArrayWrapper(preg_split($pattern, $this->input, $limit, PREG_SPLIT_NO_EMPTY));
     }
@@ -80,7 +80,7 @@ final class StringWrapper
      *
      * @return ArrayWrapper
      */
-    public function chunks(int $size): ArrayWrapper
+    public function split(int $size): ArrayWrapper
     {
         return new ArrayWrapper(str_split($this->input, $size));
     }
@@ -90,7 +90,7 @@ final class StringWrapper
      */
     public function chars(): ArrayWrapper
     {
-        return $this->chunks(1);
+        return $this->split(1);
     }
 
     /**
@@ -154,8 +154,8 @@ final class StringWrapper
     public function underscored(): StringWrapper
     {
         return $this->copy()
-                    ->regexReplace(['#\s+#' => ''])
-                    ->regexReplace(['#\B([A-Z])#' => '_\1']);
+                    ->pregReplace(['#\s+#' => ''])
+                    ->pregReplace(['#\B([A-Z])#' => '_\1']);
     }
 
     /**
@@ -164,8 +164,8 @@ final class StringWrapper
     public function dasherize(): StringWrapper
     {
         return $this->copy()
-                    ->regexReplace(['#\s+#' => ''])
-                    ->regexReplace(['#\B([A-Z])#' => '-\1']);
+                    ->pregReplace(['#\s+#' => ''])
+                    ->pregReplace(['#\B([A-Z])#' => '-\1']);
     }
 
     /**
@@ -175,8 +175,8 @@ final class StringWrapper
     {
         return $this->copy()
                     ->trim()
-                    ->regexReplace(['#\s+#' => '_'])
-                    ->regexReplaceCallback('#[-_\.]([a-z])#i', function(array $matches) {
+                    ->pregReplace(['#\s+#' => '_'])
+                    ->pregReplaceCallback('#[-_\.]([a-z])#i', function(array $matches) {
                         return ucfirst($matches[1][0]);
                     });
     }
@@ -190,8 +190,8 @@ final class StringWrapper
     {
         return $this->copy()
                     ->trim()
-                    ->regexReplace(['#[^a-z\d-]+#i' => ' '])
-                    ->regexReplace(['#\s+#' => $delimiter])
+                    ->pregReplace(['#[^a-z\d-]+#i' => ' '])
+                    ->pregReplace(['#\s+#' => $delimiter])
                     ->toLowerCase()
                     ->trim($delimiter);
     }
@@ -577,7 +577,7 @@ final class StringWrapper
      *
      * @return StringWrapper
      */
-    public function regexReplace(array $replacement): StringWrapper
+    public function pregReplace(array $replacement): StringWrapper
     {
         foreach ($replacement as $pattern => $replace) {
             $this->input = preg_replace($pattern, $replace, $this->input);
@@ -592,7 +592,7 @@ final class StringWrapper
      *
      * @return StringWrapper
      */
-    public function regexReplaceCallback(string $pattern, callable $callback): StringWrapper
+    public function pregReplaceCallback(string $pattern, callable $callback): StringWrapper
     {
         $result = preg_replace_callback($pattern, $callback, $this->input);
 

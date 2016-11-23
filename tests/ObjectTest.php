@@ -12,8 +12,8 @@ class ObjectTest extends TestCase
         $obj = object($this);
 
         $this->assertTrue($obj->hasMethod('dump'));
-        $this->assertEquals(42, $obj->call('dump'));
-        $this->assertEquals(84, $obj->call('dump', 2));
+        $this->assertEquals(42, $obj->invoke('dump'));
+        $this->assertEquals(84, $obj->invoke('dump', 2));
         $this->assertTrue($obj->hasProperty('dumper'));
         $this->assertEquals(self::class, $obj->getClass());
     }

@@ -192,6 +192,6 @@ final class Unicode
      */
     public function ReplaceUnsupported(string $input): string
     {
-        return string($input)->regexReplace([self::UNSUPPORTED => ''])->get();
+        return string($input)->pregReplace([self::UNSUPPORTED => ''])->get();
     }
 }

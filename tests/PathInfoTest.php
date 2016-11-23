@@ -9,66 +9,49 @@ class PathInfoTest extends TestCase
     {
         $path = string('foo')->pathInfo();
 
-        $this->assertTrue($path->getDirname()->isSome($dirname));
-        $this->assertEquals('.', $dirname);
-        $this->assertTrue($path->getBasename()->isSome($basename));
-        $this->assertEquals('foo', $basename);
-        $this->assertTrue($path->getExtension()->isNone());
-        $this->assertTrue($path->getFilename()->isSome($filename));
-        $this->assertEquals('foo', $filename);
+        $this->assertEquals('.', $path->getDirname());
+        $this->assertEquals('foo', $path->getBasename());
+        $this->assertEmpty($path->getExtension());
+        $this->assertEquals('foo', $path->getFilename());
     }
 
     public function testDirectory()
     {
         $path = string('foo/')->pathInfo();
 
-        $this->assertTrue($path->getDirname()->isSome($dirname));
-        $this->assertEquals('.', $dirname);
-        $this->assertTrue($path->getBasename()->isSome($basename));
-        $this->assertEquals('foo', $basename);
-        $this->assertTrue($path->getExtension()->isNone());
-        $this->assertTrue($path->getFilename()->isSome($filename));
-        $this->assertEquals('foo', $filename);
+        $this->assertEquals('.', $path->getDirname());
+        $this->assertEquals('foo', $path->getBasename());
+        $this->assertEmpty($path->getExtension());
+        $this->assertEquals('foo', $path->getFilename());
     }
 
     public function testPath()
     {
         $path = string('foo/bar')->pathInfo();
 
-        $this->assertTrue($path->getDirname()->isSome($dirname));
-        $this->assertEquals('foo', $dirname);
-        $this->assertTrue($path->getBasename()->isSome($basename));
-        $this->assertEquals('bar', $basename);
-        $this->assertTrue($path->getExtension()->isNone());
-        $this->assertTrue($path->getFilename()->isSome($filename));
-        $this->assertEquals('bar', $filename);
+        $this->assertEquals('foo', $path->getDirname());
+        $this->assertEquals('bar', $path->getBasename());
+        $this->assertEmpty($path->getExtension());
+        $this->assertEquals('bar', $path->getFilename());
     }
 
     public function testFile()
     {
         $path = string('index.php')->pathInfo();
 
-        $this->assertTrue($path->getDirname()->isSome($dirname));
-        $this->assertEquals('.', $dirname);
-        $this->assertTrue($path->getBasename()->isSome($basename));
-        $this->assertEquals('index.php', $basename);
-        $this->assertTrue($path->getExtension()->isSome($extension));
-        $this->assertEquals('php', $extension);
-        $this->assertTrue($path->getFilename()->isSome($filename));
-        $this->assertEquals('index', $filename);
+        $this->assertEquals('.', $path->getDirname());
+        $this->assertEquals('index.php', $path->getBasename());
+        $this->assertEquals('php', $path->getExtension());
+        $this->assertEquals('index', $path->getFilename());
     }
 
     public function testfilePath()
     {
         $path = string('foo/bar/index.php')->pathInfo();
 
-        $this->assertTrue($path->getDirname()->isSome($dirname));
-        $this->assertEquals('foo/bar', $dirname);
-        $this->assertTrue($path->getBasename()->isSome($basename));
-        $this->assertEquals('index.php', $basename);
-        $this->assertTrue($path->getExtension()->isSome($extension));
-        $this->assertEquals('php', $extension);
-        $this->assertTrue($path->getFilename()->isSome($filename));
-        $this->assertEquals('index', $filename);
+        $this->assertEquals('foo/bar', $path->getDirname());
+        $this->assertEquals('index.php', $path->getBasename());
+        $this->assertEquals('php', $path->getExtension());
+        $this->assertEquals('index', $path->getFilename());
     }
 }
