@@ -36,7 +36,7 @@ final class ObjectWrapper
             $this->class  = get_class($object);
             $this->object = $object;
         } else if (is_string($object) && class_exists($object)) {
-            $this->class  = $object;
+            $this->class = $object;
         } else {
             throw new \Exception('$object must be either a valid object or an existing class name');
         }
