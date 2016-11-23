@@ -60,11 +60,21 @@ final class ObjectWrapper
     }
 
     /**
+     * @return string
+     */
+    public function getClass(): string
+    {
+        return $this->class;
+    }
+
+    /**
      * @return StringWrapper
      */
-    public function getClass(): StringWrapper
+    public function getClassName(): StringWrapper
     {
-        return new StringWrapper($this->class);
+        $class = string($this->class)->namespaceInfo()->getClass();
+
+        return new StringWrapper($class);
     }
 
     /**
