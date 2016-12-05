@@ -40,6 +40,18 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     }
 
     /**
+     * @return array
+     */
+    public function slurp(): array
+    {
+        try {
+            return $this->input;
+        } finally {
+            $this->input = [];
+        }
+    }
+
+    /**
      * @return ArrayIterator
      */
     public function getIterator(): ArrayIterator
