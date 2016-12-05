@@ -256,6 +256,24 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     }
 
     /**
+     * @param $key
+     *
+     * @return Optional
+     */
+    public function pop($key): Optional
+    {
+        if ($this->hasKey($key)) {
+            $result = some($this->input[$key]);
+
+            unset($this->input[$key]);
+
+            return $result;
+        }
+
+        return none();
+    }
+
+    /**
      * @param $value
      *
      * @return int
