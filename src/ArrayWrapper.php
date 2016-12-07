@@ -240,7 +240,7 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
      */
     public function first(): Optional
     {
-        return $this->valueOf(0);
+        return maybe(reset($this->input));
     }
 
     /**
@@ -248,7 +248,7 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
      */
     public function last(): Optional
     {
-        return $this->valueOf($this->length() - 1);
+        return maybe(end($this->input));
     }
 
     /**
@@ -263,6 +263,21 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
      * @return Optional
      */
     public function popFront(): Optional
+    {
+        if ($this->isNotEmpty()) {
+            $result = reset($this->input);
+            unset($this->input[key($this->input)]);
+
+            return some($result);
+        }
+
+        return none();
+    }
+
+    /**
+     * @return Optional
+     */
+    public function shift(): Optional
     {
         return maybe(array_shift($this->input));
     }
@@ -863,6 +878,22 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     public function isNotEmpty(): bool
     {
         return !empty($this->input);
+    }
+
+    /**
+     * @return Optional
+     */
+    public function currentValue(): Optional
+    {
+        return maybe(current($this->input));
+    }
+
+    /**
+     * @return Optional
+     */
+    public function currentKey(): Optional
+    {
+        return maybe(key($this->input));
     }
 
     /**
