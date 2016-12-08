@@ -69,20 +69,21 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
         return new StringWrapper(implode($glue, $this->input));
     }
 
-    /**
-     * @param bool $preserveKeys
-     *
-     * @return ArrayWrapper
-     */
-    public function groupValues(bool $preserveKeys = false): ArrayWrapper
+    public function groupValues(): ArrayWrapper
+    {
+        $output = [];
+        foreach ($this->input as $value) {
+            $output[$value][] = $value;
+        }
+
+        return new self(array_values($output));
+    }
+
+    public function groupValuesWithKeys(): ArrayWrapper
     {
         $output = [];
         foreach ($this->input as $key => $value) {
-            if ($preserveKeys) {
-                $output[$value][$key] = $value;
-            } else {
-                $output[$value][] = $value;
-            }
+            $output[$value][$key] = $value;
         }
 
         return new self(array_values($output));
@@ -97,7 +98,7 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     {
         $output = [];
         foreach ($this->input as $value) {
-            if (assoc($value)->valueOf($key)->isSome($item)) {
+            if (is_array($value) && assoc($value)->valueOf($key)->isSome($item)) {
                 $output[$item] = $value;
             }
         }
@@ -106,14 +107,23 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * @param int  $size
-     * @param bool $preserveKeys
+     * @param int $size
      *
      * @return ArrayWrapper
      */
-    public function chunks(int $size, bool $preserveKeys = false): ArrayWrapper
+    public function chunks(int $size): ArrayWrapper
     {
-        return new self(array_chunk($this->input, $size, $preserveKeys));
+        return new self(array_chunk($this->input, $size));
+    }
+
+    /**
+     * @param int $size
+     *
+     * @return ArrayWrapper
+     */
+    public function chunksWithKey(int $size): ArrayWrapper
+    {
+        return new self(array_chunk($this->input, $size, true));
     }
 
     /**
@@ -132,7 +142,7 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
      *
      * @return ArrayWrapper
      */
-    public function combineWith(array $input): ArrayWrapper
+    public function combine(array $input): ArrayWrapper
     {
         return new self(array_combine($this->input, $input));
     }
@@ -169,8 +179,8 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * @param callable $callback
-     * @param null     $initial
+     * @param callable   $callback
+     * @param mixed|null $initial
      *
      * @return mixed
      */
@@ -265,10 +275,10 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     public function popFront(): Optional
     {
         if ($this->isNotEmpty()) {
-            $result = reset($this->input);
+            $value = reset($this->input);
             unset($this->input[key($this->input)]);
 
-            return some($result);
+            return some($value);
         }
 
         return none();
@@ -290,11 +300,10 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     public function pop($key): Optional
     {
         if ($this->hasKey($key)) {
-            $result = some($this->input[$key]);
-
+            $value = some($this->input[$key]);
             unset($this->input[$key]);
 
-            return $result;
+            return $value;
         }
 
         return none();
@@ -341,13 +350,19 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * @param bool $preserveKeys
-     *
      * @return ArrayWrapper
      */
-    public function reverse(bool $preserveKeys = false): ArrayWrapper
+    public function reverse(): ArrayWrapper
     {
-        return new self(array_reverse($this->input, $preserveKeys));
+        return new self(array_reverse($this->input));
+    }
+
+    /**
+     * @return ArrayWrapper
+     */
+    public function reverseWithKeys(): ArrayWrapper
+    {
+        return new self(array_reverse($this->input, true));
     }
 
     /**
@@ -381,8 +396,8 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * @param      $key
-     * @param null $value
+     * @param            $key
+     * @param mixed|null $value
      *
      * @return ArrayWrapper
      */
@@ -428,8 +443,8 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * @param $lhs
-     * @param $rhs
+     * @param mixed $lhs
+     * @param mixed $rhs
      *
      * @return ArrayWrapper
      */
@@ -730,36 +745,6 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * @return bool
-     */
-    public function isAssociative(): bool
-    {
-        return !$this->isIndexed();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isIndexed(): bool
-    {
-        foreach ($this->input as $key => $_) {
-            if (!is_int($key)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isConsecutive(): bool
-    {
-        return $this->isEqualTo(range(0, $this->length()));
-    }
-
-    /**
      * @param callable $callback
      *
      * @return bool
@@ -829,29 +814,6 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     public function countOccurrences(): array
     {
         return array_count_values($this->input);
-    }
-
-    /**
-     * @return float
-     */
-    public function average(): float
-    {
-        return $this->sum() / $this->length();
-    }
-
-    /**
-     * @param callable $callback
-     *
-     * @return ArrayWrapper
-     */
-    public function apply(callable $callback): ArrayWrapper
-    {
-        $result = $callback($this->input);
-        if (is_array($result)) {
-            $this->input = $result;
-        }
-
-        return $this;
     }
 
     /**

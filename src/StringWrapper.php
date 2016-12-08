@@ -423,13 +423,12 @@ final class StringWrapper
 
     /**
      * @param string $needle
-     * @param bool   $beforeNeedle
      *
      * @return Optional
      */
-    public function fromFirstOccurrenceOf(string $needle, bool $beforeNeedle = false): Optional
+    public function fromFirstOccurrenceOf(string $needle): Optional
     {
-        return maybe(strstr($this->input, $needle, $beforeNeedle));
+        return maybe(strstr($this->input, $needle));
     }
 
     /**
@@ -670,40 +669,6 @@ final class StringWrapper
     }
 
     /**
-     * @return string
-     */
-    public function encode(): string
-    {
-        return htmlspecialchars($this->input);
-    }
-
-    /**
-     * @param string   $input
-     * @param int|null $percent
-     *
-     * @return int
-     */
-    public function similarity(string $input, int &$percent = null): int
-    {
-        return similar_text($this->input, $input, $percent);
-    }
-
-    /**
-     * @param callable $callback
-     *
-     * @return StringWrapper
-     */
-    public function apply(callable $callback): StringWrapper
-    {
-        $result = $callback($this->input);
-        if (is_string($result)) {
-            $this->input = $result;
-        }
-
-        return $this;
-    }
-
-    /**
      * @param string $input
      *
      * @return bool
@@ -743,22 +708,6 @@ final class StringWrapper
     public function isNotNull(): bool
     {
         return $this->input !== null;
-    }
-
-    /**
-     * @return NamespaceInfo
-     */
-    public function namespaceInfo(): NamespaceInfo
-    {
-        return new NamespaceInfo($this->input);
-    }
-
-    /**
-     * @return PathInfo
-     */
-    public function pathInfo(): PathInfo
-    {
-        return new PathInfo($this->input);
     }
 
     /**

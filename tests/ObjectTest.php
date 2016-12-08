@@ -5,8 +5,6 @@ use function Dgame\Wrapper\object;
 
 class ObjectTest extends TestCase
 {
-    private $dumper;
-
     public function testIt()
     {
         $obj = object($this);

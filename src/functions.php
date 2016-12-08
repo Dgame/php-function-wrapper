@@ -41,3 +41,23 @@ function object($object): ObjectWrapper
 {
     return new ObjectWrapper($object);
 }
+
+/**
+ * @param string $path
+ *
+ * @return PathInfo
+ */
+function pathOf(string $path): PathInfo
+{
+    return new PathInfo($path);
+}
+
+/**
+ * @param string $namespace
+ *
+ * @return NamespaceInfo
+ */
+function namespaceOf(string $namespace): NamespaceInfo
+{
+    return new NamespaceInfo($namespace);
+}

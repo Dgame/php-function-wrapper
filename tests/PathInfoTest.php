@@ -1,13 +1,13 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use function Dgame\Wrapper\string;
+use function Dgame\Wrapper\pathOf;
 
-class PathInfoTest extends TestCase
+class pathOfTest extends TestCase
 {
     public function testSingle()
     {
-        $path = string('foo')->pathInfo();
+        $path = pathOf('foo');
 
         $this->assertEquals('.', $path->getDirname());
         $this->assertEquals('foo', $path->getBasename());
@@ -17,7 +17,7 @@ class PathInfoTest extends TestCase
 
     public function testDirectory()
     {
-        $path = string('foo/')->pathInfo();
+        $path = pathOf('foo/');
 
         $this->assertEquals('.', $path->getDirname());
         $this->assertEquals('foo', $path->getBasename());
@@ -27,7 +27,7 @@ class PathInfoTest extends TestCase
 
     public function testPath()
     {
-        $path = string('foo/bar')->pathInfo();
+        $path = pathOf('foo/bar');
 
         $this->assertEquals('foo', $path->getDirname());
         $this->assertEquals('bar', $path->getBasename());
@@ -37,7 +37,7 @@ class PathInfoTest extends TestCase
 
     public function testFile()
     {
-        $path = string('index.php')->pathInfo();
+        $path = pathOf('index.php');
 
         $this->assertEquals('.', $path->getDirname());
         $this->assertEquals('index.php', $path->getBasename());
@@ -47,7 +47,7 @@ class PathInfoTest extends TestCase
 
     public function testfilePath()
     {
-        $path = string('foo/bar/index.php')->pathInfo();
+        $path = pathOf('foo/bar/index.php');
 
         $this->assertEquals('foo/bar', $path->getDirname());
         $this->assertEquals('index.php', $path->getBasename());
