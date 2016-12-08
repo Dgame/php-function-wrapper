@@ -67,7 +67,7 @@ class ArrayTest extends TestCase
 
         $this->assertEquals(
             [['a' => 0, 'c' => 0], ['b' => 1]],
-            assoc(['a' => 0, 'b' => 1, 'c' => 0])->groupValues(true)->get()
+            assoc(['a' => 0, 'b' => 1, 'c' => 0])->groupValuesWithKeys()->get()
         );
     }
 
@@ -309,11 +309,6 @@ class ArrayTest extends TestCase
     {
         $this->assertEquals(11, assoc(range(0, 10))->length());
         $this->assertEquals(10, chars('Hallo Welt')->length());
-    }
-
-    public function testAverage()
-    {
-        $this->assertEquals(4.5, assoc(range(1, 8))->average());
     }
 
     public function testRemoveKey()

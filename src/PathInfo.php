@@ -32,7 +32,7 @@ final class PathInfo
      */
     public function __construct(string $path)
     {
-        $info = assoc(pathOf($path));
+        $info = assoc(pathinfo($path));
 
         $this->dirname   = $info->valueOf('dirname')->default('');
         $this->filename  = $info->valueOf('filename')->default('');
