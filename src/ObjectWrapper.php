@@ -68,16 +68,6 @@ final class ObjectWrapper
     }
 
     /**
-     * @return StringWrapper
-     */
-    public function getClassName(): StringWrapper
-    {
-        $class = string($this->class)->namespaceInfo()->getClass();
-
-        return new StringWrapper($class);
-    }
-
-    /**
      * @return ReflectionClass
      */
     public function getReflection(): ReflectionClass
@@ -118,5 +108,13 @@ final class ObjectWrapper
     public function hasProperty(string $property): bool
     {
         return property_exists($this->class, $property);
+    }
+
+    /**
+     * @return NamespaceInfo
+     */
+    public function getNamespaceInfo(): NamespaceInfo
+    {
+        return new NamespaceInfo($this->class);
     }
 }

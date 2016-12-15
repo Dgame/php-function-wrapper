@@ -1,13 +1,13 @@
 <?php
 
+use function Dgame\Wrapper\object;
 use PHPUnit\Framework\TestCase;
-use function Dgame\Wrapper\namespaceOf;
 
 class NamespaceInfoTest extends TestCase
 {
     public function testClass()
     {
-        $ns = namespaceOf(static::class);
+        $ns = object(static::class)->getNamespaceInfo();
 
         $this->assertEquals('NamespaceInfoTest', $ns->getClass());
         $this->assertEquals(static::class, $ns->getClass());
@@ -16,7 +16,7 @@ class NamespaceInfoTest extends TestCase
 
     public function testExternalClass()
     {
-        $ns = namespaceOf('\Exception');
+        $ns = object('\Exception')->getNamespaceInfo();
 
         $this->assertEquals('Exception', $ns->getClass());
         $this->assertEmpty($ns->getNamespace());
@@ -24,7 +24,7 @@ class NamespaceInfoTest extends TestCase
 
     public function testNamespace()
     {
-        $ns = namespaceOf(TestCase::class);
+        $ns = object(TestCase::class)->getNamespaceInfo();
 
         $this->assertEquals('TestCase', $ns->getClass());
         $this->assertEquals('PHPUnit\Framework', $ns->getNamespace());

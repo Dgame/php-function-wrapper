@@ -43,21 +43,11 @@ function object($object): ObjectWrapper
 }
 
 /**
- * @param string $path
+ * @param string $filename
  *
- * @return PathInfo
+ * @return FileWrapper
  */
-function pathOf(string $path): PathInfo
+function filename(string $filename): FileWrapper
 {
-    return new PathInfo($path);
-}
-
-/**
- * @param string $namespace
- *
- * @return NamespaceInfo
- */
-function namespaceOf(string $namespace): NamespaceInfo
-{
-    return new NamespaceInfo($namespace);
+    return new FileWrapper($filename);
 }
