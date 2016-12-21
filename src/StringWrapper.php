@@ -149,94 +149,19 @@ final class StringWrapper
     }
 
     /**
-     * @return StringWrapper
+     * @return StringConverter
      */
-    public function underscored(): StringWrapper
+    public function convert(): StringConverter
     {
-        return $this->copy()
-                    ->pregReplace('#\s+#', '')
-                    ->pregReplace('#\B([A-Z])#', '_\1');
+        return new StringConverter($this->input);
     }
 
     /**
-     * @return StringWrapper
+     * @return StringIterator
      */
-    public function dasherize(): StringWrapper
+    public function iter(): StringIterator
     {
-        return $this->copy()
-                    ->pregReplace('#\s+#', '')
-                    ->pregReplace('#\B([A-Z])#', '-\1');
-    }
-
-    /**
-     * @return StringWrapper
-     */
-    public function camelize(): StringWrapper
-    {
-        return $this->copy()
-                    ->trim()
-                    ->pregReplace('#\s+#', '_')
-                    ->pregReplaceCallback('#[-_\.]([a-z])#i', function (array $matches) {
-                        return ucfirst($matches[1][0]);
-                    });
-    }
-
-    /**
-     * @param string $delimiter
-     *
-     * @return StringWrapper
-     */
-    public function slugify(string $delimiter = '-'): StringWrapper
-    {
-        return $this->copy()
-                    ->trim()
-                    ->pregReplace('#[^a-z\d-]+#i', ' ')
-                    ->pregReplace('#\s+#', $delimiter)
-                    ->toLowerCase()
-                    ->trim($delimiter);
-    }
-
-    /**
-     * @param string $left
-     * @param string $right
-     *
-     * @return StringWrapper
-     */
-    public function between(string $left, string $right): StringWrapper
-    {
-        if ($this->firstIndexOf($left)->isSome($i1) && $this->firstIndexOf($right)->isSome($i2)) {
-            $start = $i1 + strlen($left);
-
-            return $this->substring($start, $i2 - $start)->trim();
-        }
-
-        return new self();
-    }
-
-    /**
-     * @param string $delimiter
-     *
-     * @return StringWrapper
-     */
-    public function popFront(string $delimiter): StringWrapper
-    {
-        $result = $this->explode($delimiter);
-        $result->popFront();
-
-        return $result->implode($delimiter);
-    }
-
-    /**
-     * @param string $delimiter
-     *
-     * @return StringWrapper
-     */
-    public function popBack(string $delimiter): StringWrapper
-    {
-        $result = $this->explode($delimiter);
-        $result->popBack();
-
-        return $result->implode($delimiter);
+        return new StringIterator($this->input);
     }
 
     /**
@@ -383,61 +308,7 @@ final class StringWrapper
         return maybe(strrpos($this->input, $needle, $offset));
     }
 
-    /**
-     * @param string $value
-     *
-     * @return StringWrapper
-     */
-    public function before(string $value): StringWrapper
-    {
-        if ($this->firstIndexOf($value)->isSome($index)) {
-            return $this->substring(0, $index);
-        }
 
-        return $this;
-    }
-
-    /**
-     * @param string $value
-     *
-     * @return StringWrapper
-     */
-    public function after(string $value): StringWrapper
-    {
-        if ($this->firstIndexOf($value)->isSome($index)) {
-            return $this->substring($index + strlen($value));
-        }
-
-        return new self();
-    }
-
-    /**
-     * @param string $value
-     *
-     * @return StringWrapper
-     */
-    public function from(string $value): StringWrapper
-    {
-        if ($this->firstIndexOf($value)->isSome($index)) {
-            return $this->substring($index);
-        }
-
-        return new self();
-    }
-
-    /**
-     * @param string $value
-     *
-     * @return StringWrapper
-     */
-    public function until(string $value): StringWrapper
-    {
-        if ($this->firstIndexOf($value)->isSome($index)) {
-            return $this->substring(0, $index);
-        }
-
-        return $this;
-    }
 
     /**
      * @param string $input

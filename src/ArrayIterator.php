@@ -143,7 +143,7 @@ final class ArrayIterator
             return $this->take($index);
         }
 
-        return new ArrayWrapper([]);
+        return $this->wrapper;
     }
 
     /**
@@ -185,7 +185,7 @@ final class ArrayIterator
             return $this->take($index + 1);
         }
 
-        return new ArrayWrapper([]);
+        return $this->wrapper;
     }
 
     /**
