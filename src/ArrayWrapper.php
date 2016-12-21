@@ -2,10 +2,7 @@
 
 namespace Dgame\Wrapper;
 
-use ArrayAccess;
-use ArrayIterator;
 use Dgame\Optional\Optional;
-use IteratorAggregate;
 use function Dgame\Optional\maybe;
 use function Dgame\Optional\none;
 use function Dgame\Optional\some;
@@ -14,7 +11,7 @@ use function Dgame\Optional\some;
  * Class ArrayWrapper
  * @package Dgame\Wrapper
  */
-final class ArrayWrapper implements ArrayAccess, IteratorAggregate
+final class ArrayWrapper
 {
     /**
      * @var array
@@ -52,14 +49,6 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * @return ArrayIterator
-     */
-    public function getIterator(): ArrayIterator
-    {
-        return new ArrayIterator($this->input);
-    }
-
-    /**
      * @param string|null $glue
      *
      * @return StringWrapper
@@ -70,46 +59,27 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * @return ArrayWrapper
+     * @return ArrayGroup
      */
-    public function groupValues(): ArrayWrapper
+    public function group(): ArrayGroup
     {
-        $output = [];
-        foreach ($this->input as $value) {
-            $output[$value][] = $value;
-        }
-
-        return new self(array_values($output));
+        return new ArrayGroup($this->input);
     }
 
     /**
-     * @return ArrayWrapper
+     * @return ArrayIterator
      */
-    public function groupValuesWithKeys(): ArrayWrapper
+    public function iter(): ArrayIterator
     {
-        $output = [];
-        foreach ($this->input as $key => $value) {
-            $output[$value][$key] = $value;
-        }
-
-        return new self(array_values($output));
+        return new ArrayIterator($this->input);
     }
 
     /**
-     * @param $key
-     *
-     * @return ArrayWrapper
+     * @return ArrayProcedure
      */
-    public function groupByKey($key): ArrayWrapper
+    public function process(): ArrayProcedure
     {
-        $output = [];
-        foreach ($this->input as $value) {
-            if (is_array($value) && assoc($value)->valueOf($key)->isSome($item)) {
-                $output[$item] = $value;
-            }
-        }
-
-        return new self($output);
+        return new ArrayProcedure($this->input);
     }
 
     /**
@@ -270,14 +240,6 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     /**
      * @return Optional
      */
-    public function popBack(): Optional
-    {
-        return maybe(array_pop($this->input));
-    }
-
-    /**
-     * @return Optional
-     */
     public function popFront(): Optional
     {
         if ($this->isNotEmpty()) {
@@ -288,14 +250,6 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
         }
 
         return none();
-    }
-
-    /**
-     * @return Optional
-     */
-    public function shift(): Optional
-    {
-        return maybe(array_shift($this->input));
     }
 
     /**
@@ -313,6 +267,22 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
         }
 
         return none();
+    }
+
+    /**
+     * @return Optional
+     */
+    public function shift(): Optional
+    {
+        return maybe(array_shift($this->input));
+    }
+
+    /**
+     * @return Optional
+     */
+    public function popBack(): Optional
+    {
+        return maybe(array_pop($this->input));
     }
 
     /**
@@ -434,42 +404,6 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     /**
      * @return ArrayWrapper
      */
-    public function flatten(): ArrayWrapper
-    {
-        $output = [];
-        foreach ($this->input as $key => $value) {
-            if (is_array($value)) {
-                $output = array_merge($output, assoc($value)->flatten()->get());
-            } else {
-                $output[$key] = $value;
-            }
-        }
-
-        return new self($output);
-    }
-
-    /**
-     * @param mixed $lhs
-     * @param mixed $rhs
-     *
-     * @return ArrayWrapper
-     */
-    public function mapping($lhs, $rhs): ArrayWrapper
-    {
-        $output = [];
-        foreach ($this->input as $value) {
-            $assoc = new self($value);
-            if ($assoc->valueOf($lhs)->isSome($key) && $assoc->valueOf($rhs)->isSome($item)) {
-                $output[$key] = $item;
-            }
-        }
-
-        return new self($output);
-    }
-
-    /**
-     * @return ArrayWrapper
-     */
     public function unique(): ArrayWrapper
     {
         return new self(array_unique($this->input));
@@ -558,171 +492,6 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * @param int $n
-     *
-     * @return ArrayWrapper
-     */
-    public function take(int $n): ArrayWrapper
-    {
-        return new self(array_slice($this->input, 0, $n));
-    }
-
-    /**
-     * @param int $n
-     *
-     * @return ArrayWrapper
-     */
-    public function skip(int $n): ArrayWrapper
-    {
-        return new self(array_slice($this->input, $n));
-    }
-
-    /**
-     * @param callable $callback
-     *
-     * @return ArrayWrapper
-     */
-    public function takeWhile(callable $callback): ArrayWrapper
-    {
-        $n = 0;
-        foreach ($this->input as $value) {
-            if (!$callback($value)) {
-                break;
-            }
-            $n++;
-        }
-
-        return $this->take($n);
-    }
-
-    /**
-     * @param callable $callback
-     *
-     * @return ArrayWrapper
-     */
-    public function skipWhile(callable $callback): ArrayWrapper
-    {
-        $n = 0;
-        foreach ($this->input as $value) {
-            if (!$callback($value)) {
-                break;
-            }
-            $n++;
-        }
-
-        return $this->skip($n);
-    }
-
-    /**
-     * @param callable $callback
-     *
-     * @return ArrayWrapper
-     */
-    public function takeIf(callable $callback): ArrayWrapper
-    {
-        $output = [];
-        foreach ($this->input as $key => $value) {
-            if ($callback($value)) {
-                $output[$key] = $value;
-            }
-        }
-
-        return new self($output);
-    }
-
-    /**
-     * @param callable $callback
-     *
-     * @return ArrayWrapper
-     */
-    public function skipIf(callable $callback): ArrayWrapper
-    {
-        $output = [];
-        foreach ($this->input as $key => $value) {
-            if (!$callback($value)) {
-                $output[$key] = $value;
-            }
-        }
-
-        return new self($output);
-    }
-
-    /**
-     * @param $left
-     * @param $right
-     *
-     * @return ArrayWrapper
-     */
-    public function between($left, $right): ArrayWrapper
-    {
-        if ($this->indexOf($left)->isSome($lhs)) {
-            if ($this->indexOf($right)->isSome($rhs)) {
-                return $this->slice($lhs + 1, $rhs);
-            }
-
-            return $this->skip($lhs + 1);
-        }
-
-        return new self([]);
-    }
-
-    /**
-     * @param $value
-     *
-     * @return ArrayWrapper
-     */
-    public function before($value): ArrayWrapper
-    {
-        if ($this->indexOf($value)->isSome($index)) {
-            return $this->take($index);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param $value
-     *
-     * @return ArrayWrapper
-     */
-    public function after($value): ArrayWrapper
-    {
-        if ($this->indexOf($value)->isSome($index)) {
-            return $this->skip($index + 1);
-        }
-
-        return new self([]);
-    }
-
-    /**
-     * @param $value
-     *
-     * @return ArrayWrapper
-     */
-    public function from($value): ArrayWrapper
-    {
-        if ($this->indexOf($value)->isSome($index)) {
-            return $this->skip($index);
-        }
-
-        return new self([]);
-    }
-
-    /**
-     * @param $value
-     *
-     * @return ArrayWrapper
-     */
-    public function until($value): ArrayWrapper
-    {
-        if ($this->indexOf($value)->isSome($index)) {
-            return $this->take($index + 1);
-        }
-
-        return $this;
-    }
-
-    /**
      * @param array $input
      *
      * @return ArrayWrapper
@@ -751,35 +520,13 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * @param callable $callback
+     * @param $key
      *
-     * @return bool
+     * @return mixed
      */
-    public function all(callable $callback): bool
+    public function at($key)
     {
-        foreach ($this->input as $value) {
-            if (!$callback($value)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @param callable $callback
-     *
-     * @return bool
-     */
-    public function any(callable $callback): bool
-    {
-        foreach ($this->input as $value) {
-            if ($callback($value)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->valueOf($key)->default(null);
     }
 
     /**
@@ -862,46 +609,5 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     public function currentKey(): Optional
     {
         return maybe(key($this->input));
-    }
-
-    /**
-     * @param mixed $key
-     *
-     * @return bool
-     */
-    public function offsetExists($key)
-    {
-        return $this->hasKey($key);
-    }
-
-    /**
-     * @param mixed $key
-     *
-     * @return mixed
-     */
-    public function offsetGet($key)
-    {
-        return $this->valueOf($key)->default(null);
-    }
-
-    /**
-     * @param mixed $key
-     * @param mixed $value
-     */
-    public function offsetSet($key, $value)
-    {
-        if ($key === null) {
-            $this->input[] = $value;
-        } else {
-            $this->input[$key] = $value;
-        }
-    }
-
-    /**
-     * @param mixed $key
-     */
-    public function offsetUnset($key)
-    {
-        unset($this->input[$key]);
     }
 }
