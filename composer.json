@@ -1,9 +1,9 @@
 {
-    "name": "dgame/php-function-wrapper",
-    "description": "php function wrapper",
+    "name": "dgame/php-wrapper",
+    "description": "php wrapper",
     "license": "MIT",
     "type": "library",
-    "homepage": "https://github.com/php-function-wrapper",
+    "homepage": "https://github.com/php-wrapper",
     "keywords": [
         "Functions",
         "Interal",
