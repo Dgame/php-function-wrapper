@@ -35,11 +35,6 @@ class StringTest extends TestCase
         $this->assertEquals('fooBarQuatz', string(' foo bar quatz ')->camelize()->get());
     }
 
-    public function testToAscii()
-    {
-        $this->assertEquals('aaeeiioouuuss', string('áàèéìíóòùúûß')->toAscii()->get());
-    }
-
     public function testBetween()
     {
         $this->assertEquals('Middle', string('StartMiddleEnd')->between('Start', 'End')->get());

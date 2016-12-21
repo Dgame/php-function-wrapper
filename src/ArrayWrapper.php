@@ -69,6 +69,9 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
         return new StringWrapper(implode($glue, $this->input));
     }
 
+    /**
+     * @return ArrayWrapper
+     */
     public function groupValues(): ArrayWrapper
     {
         $output = [];
@@ -79,6 +82,9 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
         return new self(array_values($output));
     }
 
+    /**
+     * @return ArrayWrapper
+     */
     public function groupValuesWithKeys(): ArrayWrapper
     {
         $output = [];
@@ -338,13 +344,13 @@ final class ArrayWrapper implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * @param array $replacement
+     * @param \array[] ...$replacement
      *
      * @return ArrayWrapper
      */
-    public function replace(array $replacement): ArrayWrapper
+    public function replace(array ...$replacement): ArrayWrapper
     {
-        $this->input = array_replace($this->input, $replacement);
+        $this->input = array_replace($this->input, ...$replacement);
 
         return $this;
     }

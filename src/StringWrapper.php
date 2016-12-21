@@ -154,8 +154,8 @@ final class StringWrapper
     public function underscored(): StringWrapper
     {
         return $this->copy()
-                    ->pregReplace(['#\s+#' => ''])
-                    ->pregReplace(['#\B([A-Z])#' => '_\1']);
+                    ->pregReplace('#\s+#', '')
+                    ->pregReplace('#\B([A-Z])#', '_\1');
     }
 
     /**
@@ -164,8 +164,8 @@ final class StringWrapper
     public function dasherize(): StringWrapper
     {
         return $this->copy()
-                    ->pregReplace(['#\s+#' => ''])
-                    ->pregReplace(['#\B([A-Z])#' => '-\1']);
+                    ->pregReplace('#\s+#', '')
+                    ->pregReplace('#\B([A-Z])#', '-\1');
     }
 
     /**
@@ -175,8 +175,8 @@ final class StringWrapper
     {
         return $this->copy()
                     ->trim()
-                    ->pregReplace(['#\s+#' => '_'])
-                    ->pregReplaceCallback('#[-_\.]([a-z])#i', function(array $matches) {
+                    ->pregReplace('#\s+#', '_')
+                    ->pregReplaceCallback('#[-_\.]([a-z])#i', function (array $matches) {
                         return ucfirst($matches[1][0]);
                     });
     }
@@ -190,8 +190,8 @@ final class StringWrapper
     {
         return $this->copy()
                     ->trim()
-                    ->pregReplace(['#[^a-z\d-]+#i' => ' '])
-                    ->pregReplace(['#\s+#' => $delimiter])
+                    ->pregReplace('#[^a-z\d-]+#i', ' ')
+                    ->pregReplace('#\s+#', $delimiter)
                     ->toLowerCase()
                     ->trim($delimiter);
     }
@@ -269,86 +269,6 @@ final class StringWrapper
     public function toLowerCaseFirst(): StringWrapper
     {
         return new self(lcfirst($this->input));
-    }
-
-    /**
-     * @return StringWrapper
-     */
-    public function toAscii(): StringWrapper
-    {
-        return new self(Unicode::Clean($this->input));
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAlphaNumeric(): bool
-    {
-        return ctype_alnum($this->input);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAlpha(): bool
-    {
-        return ctype_alpha($this->input);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isControl(): bool
-    {
-        return ctype_cntrl($this->input);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isDigit(): bool
-    {
-        return ctype_digit($this->input);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLowerCase(): bool
-    {
-        return ctype_lower($this->input);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isUpperCase(): bool
-    {
-        return ctype_upper($this->input);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isPunctation(): bool
-    {
-        return ctype_punct($this->input);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSpace(): bool
-    {
-        return ctype_space($this->input);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isHexaDecimal(): bool
-    {
-        return ctype_xdigit($this->input);
     }
 
     /**
@@ -572,15 +492,14 @@ final class StringWrapper
     }
 
     /**
-     * @param array $replacement
+     * @param $pattern
+     * @param $replace
      *
      * @return StringWrapper
      */
-    public function pregReplace(array $replacement): StringWrapper
+    public function pregReplace($pattern, $replace): StringWrapper
     {
-        foreach ($replacement as $pattern => $replace) {
-            $this->input = preg_replace($pattern, $replace, $this->input);
-        }
+        $this->input = preg_replace($pattern, $replace, $this->input);
 
         return $this;
     }
@@ -599,15 +518,14 @@ final class StringWrapper
     }
 
     /**
-     * @param array $replacement
+     * @param $search
+     * @param $replace
      *
      * @return StringWrapper
      */
-    public function replace(array $replacement): StringWrapper
+    public function replace($search, $replace): StringWrapper
     {
-        foreach ($replacement as $search => $replace) {
-            $this->input = str_replace($search, $replace, $this->input);
-        }
+        $this->input = str_replace($search, $replace, $this->input);
 
         return $this;
     }
