@@ -47,6 +47,7 @@ final class StringConverter implements StringConvertInterface
     public function camelize(): StringWrapper
     {
         return $this->wrapper->trim()
+                             ->trim('-_.')
                              ->pregReplace('#\s+#', '_')
                              ->pregReplaceCallback('#[-_\.]([a-z])#i', function (array $matches) {
                                  return ucfirst($matches[1][0]);

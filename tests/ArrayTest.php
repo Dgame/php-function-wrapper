@@ -97,12 +97,12 @@ class ArrayTest extends TestCase
 
     public function testTake()
     {
-        $this->assertEquals('Ha', chars('Hallo')->iter()->take(2)->implode()->get());
+        $this->assertEquals('Ha', chars('Hallo')->take(2)->implode()->get());
     }
 
     public function testSkip()
     {
-        $this->assertEquals('lo', chars('Hallo')->iter()->skip(3)->implode()->get());
+        $this->assertEquals('lo', chars('Hallo')->skip(3)->implode()->get());
     }
 
     public function testSlice()
@@ -148,7 +148,7 @@ class ArrayTest extends TestCase
             return $item < 10;
         };
 
-        $this->assertEquals([0, 1, 2, 8], assoc([0, 1, 2, 8, 10, 15, 20])->iter()->takeWhile($belowTen)->get());
+        $this->assertEquals([0, 1, 2, 8], assoc([0, 1, 2, 8, 10, 15, 20])->takeWhile($belowTen)->get());
     }
 
     public function testTakeIf()
@@ -159,7 +159,7 @@ class ArrayTest extends TestCase
 
         $this->assertEquals(
             [4, 7, 8],
-            assoc([0, 1, 2, 3, 4, 7, 8, 10, 15, 20])->iter()->takeIf($inRange)->values()->get()
+            assoc([0, 1, 2, 3, 4, 7, 8, 10, 15, 20])->takeIf($inRange)->values()->get()
         );
     }
 
@@ -169,7 +169,7 @@ class ArrayTest extends TestCase
             return $item < 10;
         };
 
-        $this->assertEquals([10, 15, 20], assoc([0, 1, 2, 10, 15, 20])->iter()->skipWhile($belowTen)->get());
+        $this->assertEquals([10, 15, 20], assoc([0, 1, 2, 10, 15, 20])->skipWhile($belowTen)->get());
     }
 
     public function testSkipIf()
@@ -180,73 +180,73 @@ class ArrayTest extends TestCase
 
         $this->assertEquals(
             [0, 1, 2, 3, 10, 15, 20],
-            assoc([0, 1, 2, 3, 4, 7, 8, 10, 15, 20])->iter()->skipIf($inRange)->values()->get()
+            assoc([0, 1, 2, 3, 4, 7, 8, 10, 15, 20])->skipIf($inRange)->values()->get()
         );
     }
 
     public function testBetween()
     {
-        $this->assertEquals([2, 10, 20], assoc([0, 1, 2, 10, 20, 30, 40])->iter()->between(1, 30)->values()->get());
-        $this->assertEquals(['c' => 'd'], assoc(['a' => 'b', 'c' => 'd', 'e' => 'f'])->iter()->between('b', 'f')->get());
-        $this->assertEquals('ooB', chars('FooBar')->iter()->between('F', 'a')->implode()->get());
+        $this->assertEquals([2, 10, 20], assoc([0, 1, 2, 10, 20, 30, 40])->between(1, 30)->values()->get());
+        $this->assertEquals(['c' => 'd'], assoc(['a' => 'b', 'c' => 'd', 'e' => 'f'])->between('b', 'f')->get());
+        $this->assertEquals('ooB', chars('FooBar')->between('F', 'a')->implode()->get());
     }
 
     public function testEmptyBetween()
     {
-        $this->assertTrue(assoc([0, 1, 2, 10, 20, 30, 40])->iter()->between(20, 1)->isEmpty());
-        $this->assertTrue(assoc(['a' => 'b', 'c' => 'd', 'e' => 'f'])->iter()->between('f', 'b')->isEmpty());
-        $this->assertTrue(chars('FooBar')->iter()->between('a', 'F')->implode()->isEmpty());
+        $this->assertTrue(assoc([0, 1, 2, 10, 20, 30, 40])->between(20, 1)->isEmpty());
+        $this->assertTrue(assoc(['a' => 'b', 'c' => 'd', 'e' => 'f'])->between('f', 'b')->isEmpty());
+        $this->assertTrue(chars('FooBar')->between('a', 'F')->implode()->isEmpty());
     }
 
     public function testBefore()
     {
-        $this->assertEquals('ab', chars('abcdef')->iter()->before('c')->implode()->get());
+        $this->assertEquals('ab', chars('abcdef')->before('c')->implode()->get());
     }
 
     public function testBeforeAssoc()
     {
         $this->assertEquals(
             ['a' => 'z', 'b' => 'y'],
-            assoc(['a' => 'z', 'b' => 'y', 'c' => 'x', 'd' => 'w'])->iter()->before('x')->get()
+            assoc(['a' => 'z', 'b' => 'y', 'c' => 'x', 'd' => 'w'])->before('x')->get()
         );
     }
 
     public function testAfter()
     {
-        $this->assertEquals('ef', chars('abcdef')->iter()->after('d')->implode()->get());
+        $this->assertEquals('ef', chars('abcdef')->after('d')->implode()->get());
     }
 
     public function testAfterAssoc()
     {
         $this->assertEquals(
             ['d' => 'w'],
-            assoc(['a' => 'z', 'b' => 'y', 'c' => 'x', 'd' => 'w'])->iter()->after('x')->get()
+            assoc(['a' => 'z', 'b' => 'y', 'c' => 'x', 'd' => 'w'])->after('x')->get()
         );
     }
 
     public function testFrom()
     {
-        $this->assertEquals('def', chars('abcdef')->iter()->from('d')->implode()->get());
+        $this->assertEquals('def', chars('abcdef')->from('d')->implode()->get());
     }
 
     public function testFromAssoc()
     {
         $this->assertEquals(
             ['c' => 'x', 'd' => 'w'],
-            assoc(['a' => 'z', 'b' => 'y', 'c' => 'x', 'd' => 'w'])->iter()->from('x')->get()
+            assoc(['a' => 'z', 'b' => 'y', 'c' => 'x', 'd' => 'w'])->from('x')->get()
         );
     }
 
     public function testUntil()
     {
-        $this->assertEquals('abc', chars('abcdef')->iter()->until('c')->implode()->get());
+        $this->assertEquals('abc', chars('abcdef')->until('c')->implode()->get());
     }
 
     public function testUntilAssoc()
     {
         $this->assertEquals(
             ['a' => 'z', 'b' => 'y', 'c' => 'x'],
-            assoc(['a' => 'z', 'b' => 'y', 'c' => 'x', 'd' => 'w'])->iter()->until('x')->get()
+            assoc(['a' => 'z', 'b' => 'y', 'c' => 'x', 'd' => 'w'])->until('x')->get()
         );
     }
 
@@ -256,8 +256,8 @@ class ArrayTest extends TestCase
             return $item >= 0;
         };
 
-        $this->assertTrue(assoc([0, 1, 2, 3])->iter()->all($positive));
-        $this->assertFalse(assoc([-1, 2, 3, 4])->iter()->all($positive));
+        $this->assertTrue(assoc([0, 1, 2, 3])->all($positive));
+        $this->assertFalse(assoc([-1, 2, 3, 4])->all($positive));
     }
 
     public function testAny()
@@ -266,8 +266,8 @@ class ArrayTest extends TestCase
             return $item > 0;
         };
 
-        $this->assertTrue(assoc([-1, 0, 1])->iter()->any($positive));
-        $this->assertFalse(assoc([-1])->iter()->any($positive));
+        $this->assertTrue(assoc([-1, 0, 1])->any($positive));
+        $this->assertFalse(assoc([-1])->any($positive));
     }
 
     public function testSum()

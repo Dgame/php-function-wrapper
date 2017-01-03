@@ -11,7 +11,7 @@ use function Dgame\Optional\some;
  * Class ArrayWrapper
  * @package Dgame\Wrapper
  */
-final class ArrayWrapper
+final class ArrayWrapper implements ArrayIteratorInterface
 {
     /**
      * @var array
@@ -67,11 +67,160 @@ final class ArrayWrapper
     }
 
     /**
-     * @return ArrayIterator
+     * @param int $n
+     *
+     * @return ArrayWrapper
      */
-    public function iter(): ArrayIterator
+    public function take(int $n): ArrayWrapper
     {
-        return new ArrayIterator($this->input);
+        $iterator = new ArrayIterator($this);
+
+        return $iterator->take($n);
+    }
+
+    /**
+     * @param int $n
+     *
+     * @return ArrayWrapper
+     */
+    public function skip(int $n): ArrayWrapper
+    {
+        $iterator = new ArrayIterator($this);
+
+        return $iterator->skip($n);
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return ArrayWrapper
+     */
+    public function takeWhile(callable $callback): ArrayWrapper
+    {
+        $iterator = new ArrayIterator($this);
+
+        return $iterator->takeWhile($callback);
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return ArrayWrapper
+     */
+    public function skipWhile(callable $callback): ArrayWrapper
+    {
+        $iterator = new ArrayIterator($this);
+
+        return $iterator->skipWhile($callback);
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return ArrayWrapper
+     */
+    public function takeIf(callable $callback): ArrayWrapper
+    {
+        $iterator = new ArrayIterator($this);
+
+        return $iterator->takeIf($callback);
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return ArrayWrapper
+     */
+    public function skipIf(callable $callback): ArrayWrapper
+    {
+        $iterator = new ArrayIterator($this);
+
+        return $iterator->skipIf($callback);
+    }
+
+    /**
+     * @param $left
+     * @param $right
+     *
+     * @return ArrayWrapper
+     */
+    public function between($left, $right): ArrayWrapper
+    {
+        $iterator = new ArrayIterator($this);
+
+        return $iterator->between($left, $right);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return ArrayWrapper
+     */
+    public function before($value): ArrayWrapper
+    {
+        $iterator = new ArrayIterator($this);
+
+        return $iterator->before($value);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return ArrayWrapper
+     */
+    public function after($value): ArrayWrapper
+    {
+        $iterator = new ArrayIterator($this);
+
+        return $iterator->after($value);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return ArrayWrapper
+     */
+    public function from($value): ArrayWrapper
+    {
+        $iterator = new ArrayIterator($this);
+
+        return $iterator->from($value);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return ArrayWrapper
+     */
+    public function until($value): ArrayWrapper
+    {
+        $iterator = new ArrayIterator($this);
+
+        return $iterator->until($value);
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return bool
+     */
+    public function all(callable $callback): bool
+    {
+        $iterator = new ArrayIterator($this);
+
+        return $iterator->all($callback);
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return bool
+     */
+    public function any(callable $callback): bool
+    {
+        $iterator = new ArrayIterator($this);
+
+        return $iterator->any($callback);
     }
 
     /**

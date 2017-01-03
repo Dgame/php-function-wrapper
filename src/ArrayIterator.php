@@ -6,7 +6,7 @@ namespace Dgame\Wrapper;
  * Class ArrayIterator
  * @package Dgame\Wrapper
  */
-final class ArrayIterator
+final class ArrayIterator implements ArrayIteratorInterface
 {
     /**
      * @var ArrayWrapper
@@ -16,11 +16,11 @@ final class ArrayIterator
     /**
      * ArrayIterator constructor.
      *
-     * @param array $input
+     * @param ArrayWrapper $wrapper
      */
-    public function __construct(array $input)
+    public function __construct(ArrayWrapper $wrapper)
     {
-        $this->wrapper = new ArrayWrapper($input);
+        $this->wrapper = $wrapper;
     }
 
     /**
