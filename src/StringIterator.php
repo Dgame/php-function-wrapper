@@ -6,7 +6,7 @@ namespace Dgame\Wrapper;
  * Class StringIterator
  * @package Dgame\Wrapper
  */
-final class StringIterator
+final class StringIterator implements StringIteratorInterface
 {
     /**
      * @var StringWrapper
@@ -16,17 +16,17 @@ final class StringIterator
     /**
      * StringIterator constructor.
      *
-     * @param string $input
+     * @param StringWrapper $wrapper
      */
-    public function __construct(string $input)
+    public function __construct(StringWrapper $wrapper)
     {
-        $this->wrapper = new StringWrapper($input);
+        $this->wrapper = $wrapper;
     }
 
     /**
      * @return string
      */
-    public function asString(): string
+    public function getString(): string
     {
         return $this->wrapper->get();
     }
@@ -34,7 +34,7 @@ final class StringIterator
     /**
      * @return StringWrapper
      */
-    public function asWrapper(): StringWrapper
+    public function getWrapper(): StringWrapper
     {
         return $this->wrapper;
     }
@@ -47,7 +47,7 @@ final class StringIterator
      */
     public function between(string $left, string $right): StringWrapper
     {
-        if ($this->wrapper->firstIndexOf($left)->isSome($i1) && $this->wrapper->firstIndexOf($right)->isSome($i2)) {
+        if ($this->wrapper->indexOf($left)->isSome($i1) && $this->wrapper->indexOf($right)->isSome($i2)) {
             $start = $i1 + strlen($left);
 
             return $this->wrapper->substring($start, $i2 - $start)->trim();
@@ -66,7 +66,7 @@ final class StringIterator
         $result = $this->wrapper->explode($delimiter);
         $result->popFront();
 
-        return new self($result->implode($delimiter)->get());
+        return new self($result->implode($delimiter));
     }
 
     /**
@@ -79,7 +79,7 @@ final class StringIterator
         $result = $this->wrapper->explode($delimiter);
         $result->popBack();
 
-        return new self($result->implode($delimiter)->get());
+        return new self($result->implode($delimiter));
     }
 
     /**
@@ -89,7 +89,7 @@ final class StringIterator
      */
     public function before(string $value): StringWrapper
     {
-        if ($this->wrapper->firstIndexOf($value)->isSome($index)) {
+        if ($this->wrapper->indexOf($value)->isSome($index)) {
             return $this->wrapper->substring(0, $index);
         }
 
@@ -103,7 +103,7 @@ final class StringIterator
      */
     public function after(string $value): StringWrapper
     {
-        if ($this->wrapper->firstIndexOf($value)->isSome($index)) {
+        if ($this->wrapper->indexOf($value)->isSome($index)) {
             return $this->wrapper->substring($index + strlen($value));
         }
 
@@ -117,7 +117,7 @@ final class StringIterator
      */
     public function from(string $value): StringWrapper
     {
-        if ($this->wrapper->firstIndexOf($value)->isSome($index)) {
+        if ($this->wrapper->indexOf($value)->isSome($index)) {
             return $this->wrapper->substring($index);
         }
 
@@ -131,7 +131,7 @@ final class StringIterator
      */
     public function until(string $value): StringWrapper
     {
-        if ($this->wrapper->firstIndexOf($value)->isSome($index)) {
+        if ($this->wrapper->indexOf($value)->isSome($index)) {
             return $this->wrapper->substring(0, $index);
         }
 

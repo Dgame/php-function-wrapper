@@ -7,7 +7,7 @@ class StringOptionalTest extends TestCase
 {
     public function testFirstPositionOf()
     {
-        $this->assertTrue(string('foo')->firstIndexOf('o')->isSome($pos));
+        $this->assertTrue(string('foo')->indexOf('o')->isSome($pos));
         $this->assertEquals(1, $pos);
     }
 

@@ -11,7 +11,7 @@ use function Dgame\Optional\some;
  * Class StringWrapper
  * @package Dgame\Wrapper
  */
-final class StringWrapper
+final class StringWrapper implements StringConvertInterface, StringIteratorInterface
 {
     /**
      * @var string
@@ -149,19 +149,140 @@ final class StringWrapper
     }
 
     /**
-     * @return StringConverter
+     * @return StringWrapper
      */
-    public function convert(): StringConverter
+    public function underscored(): StringWrapper
     {
-        return new StringConverter($this->input);
+        $converter = new StringConverter($this);
+
+        return $converter->underscored();
     }
 
     /**
+     * @return StringWrapper
+     */
+    public function dasherize(): StringWrapper
+    {
+        $converter = new StringConverter($this);
+
+        return $converter->dasherize();
+    }
+
+    /**
+     * @return StringWrapper
+     */
+    public function camelize(): StringWrapper
+    {
+        $converter = new StringConverter($this);
+
+        return $converter->camelize();
+    }
+
+    /**
+     * @return StringWrapper
+     */
+    public function titelize(): StringWrapper
+    {
+        $converter = new StringConverter($this);
+
+        return $converter->titelize();
+    }
+
+    /**
+     * @param string $delimiter
+     *
+     * @return StringWrapper
+     */
+    public function slugify(string $delimiter = '-'): StringWrapper
+    {
+        $converter = new StringConverter($this);
+
+        return $converter->slugify($delimiter);
+    }
+
+    /**
+     * @param string $left
+     * @param string $right
+     *
+     * @return StringWrapper
+     */
+    public function between(string $left, string $right): StringWrapper
+    {
+        $iterator = new StringIterator($this);
+
+        return $iterator->between($left, $right);
+    }
+
+    /**
+     * @param string $delimiter
+     *
      * @return StringIterator
      */
-    public function iter(): StringIterator
+    public function popFront(string $delimiter): StringIterator
     {
-        return new StringIterator($this->input);
+        $iterator = new StringIterator($this);
+
+        return $iterator->popFront($delimiter);
+    }
+
+    /**
+     * @param string $delimiter
+     *
+     * @return StringIterator
+     */
+    public function popBack(string $delimiter): StringIterator
+    {
+        $iterator = new StringIterator($this);
+
+        return $iterator->popBack($delimiter);
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return StringWrapper
+     */
+    public function before(string $value): StringWrapper
+    {
+        $iterator = new StringIterator($this);
+
+        return $iterator->before($value);
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return StringWrapper
+     */
+    public function after(string $value): StringWrapper
+    {
+        $iterator = new StringIterator($this);
+
+        return $iterator->after($value);
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return StringWrapper
+     */
+    public function from(string $value): StringWrapper
+    {
+        $iterator = new StringIterator($this);
+
+        return $iterator->from($value);
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return StringWrapper
+     */
+    public function until(string $value): StringWrapper
+    {
+        $iterator = new StringIterator($this);
+
+        return $iterator->until($value);
     }
 
     /**
@@ -292,7 +413,7 @@ final class StringWrapper
      *
      * @return Optional
      */
-    public function firstIndexOf(string $needle, int $offset = 0): Optional
+    public function indexOf(string $needle, int $offset = 0): Optional
     {
         return maybe(strpos($this->input, $needle, $offset));
     }
@@ -307,8 +428,6 @@ final class StringWrapper
     {
         return maybe(strrpos($this->input, $needle, $offset));
     }
-
-
 
     /**
      * @param string $input
@@ -409,7 +528,7 @@ final class StringWrapper
     public function replaceFirst(array $replacement): StringWrapper
     {
         foreach ($replacement as $needle => $replace) {
-            if ($this->firstIndexOf($needle)->isSome($pos)) {
+            if ($this->indexOf($needle)->isSome($pos)) {
                 $this->input = substr_replace($this->input, $replace, $pos, strlen($needle));
             }
         }

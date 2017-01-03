@@ -6,7 +6,7 @@ namespace Dgame\Wrapper;
  * Class StringConverter
  * @package Dgame\Wrapper
  */
-final class StringConverter
+final class StringConverter implements StringConvertInterface
 {
     /**
      * @var StringWrapper
@@ -14,13 +14,13 @@ final class StringConverter
     private $wrapper;
 
     /**
-     * StringPretty constructor.
+     * StringConverter constructor.
      *
-     * @param string $input
+     * @param StringWrapper $wrapper
      */
-    public function __construct(string $input)
+    public function __construct(StringWrapper $wrapper)
     {
-        $this->wrapper = new StringWrapper($input);
+        $this->wrapper = $wrapper;
     }
 
     /**
@@ -28,9 +28,8 @@ final class StringConverter
      */
     public function underscored(): StringWrapper
     {
-        return $this->wrapper
-            ->pregReplace('#\s+#', '')
-            ->pregReplace('#\B([A-Z])#', '_\1');
+        return $this->wrapper->pregReplace('#\s+#', '')
+                             ->pregReplace('#\B([A-Z])#', '_\1');
     }
 
     /**
@@ -38,9 +37,8 @@ final class StringConverter
      */
     public function dasherize(): StringWrapper
     {
-        return $this->wrapper
-            ->pregReplace('#\s+#', '')
-            ->pregReplace('#\B([A-Z])#', '-\1');
+        return $this->wrapper->pregReplace('#\s+#', '')
+                             ->pregReplace('#\B([A-Z])#', '-\1');
     }
 
     /**
@@ -48,12 +46,19 @@ final class StringConverter
      */
     public function camelize(): StringWrapper
     {
-        return $this->wrapper
-            ->trim()
-            ->pregReplace('#\s+#', '_')
-            ->pregReplaceCallback('#[-_\.]([a-z])#i', function (array $matches) {
-                return ucfirst($matches[1][0]);
-            });
+        return $this->wrapper->trim()
+                             ->pregReplace('#\s+#', '_')
+                             ->pregReplaceCallback('#[-_\.]([a-z])#i', function (array $matches) {
+                                 return ucfirst($matches[1][0]);
+                             });
+    }
+
+    /**
+     * @return StringWrapper
+     */
+    public function titelize(): StringWrapper
+    {
+        return $this->camelize()->toUpperCaseFirst();
     }
 
     /**
@@ -63,11 +68,10 @@ final class StringConverter
      */
     public function slugify(string $delimiter = '-'): StringWrapper
     {
-        return $this->wrapper
-            ->trim()
-            ->pregReplace('#[^a-z\d-]+#i', ' ')
-            ->pregReplace('#\s+#', $delimiter)
-            ->toLowerCase()
-            ->trim($delimiter);
+        return $this->wrapper->trim()
+                             ->pregReplace('#[^a-z\d-]+#i', ' ')
+                             ->pregReplace('#\s+#', $delimiter)
+                             ->toLowerCase()
+                             ->trim($delimiter);
     }
 }
