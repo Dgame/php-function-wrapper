@@ -2,7 +2,7 @@
 
 namespace Dgame\Wrapper;
 
-use Dgame\Optional\Optional;
+use Dgame\Optional\OptionalInterface;
 use function Dgame\Optional\maybe;
 use function Dgame\Optional\none;
 use function Dgame\Optional\some;
@@ -390,43 +390,43 @@ final class StringWrapper implements StringConvertInterface, StringIteratorInter
     /**
      * @param string $needle
      *
-     * @return Optional
+     * @return OptionalInterface
      */
-    public function fromFirstOccurrenceOf(string $needle): Optional
+    public function fromFirstOccurrenceOf(string $needle): OptionalInterface
     {
-        return maybe(strstr($this->input, $needle));
+        return maybe(strstr($this->input, $needle))->ensureNotFalse();
     }
 
     /**
      * @param string $needle
      *
-     * @return Optional
+     * @return OptionalInterface
      */
-    public function fromLastOccurrenceOf(string $needle): Optional
+    public function fromLastOccurrenceOf(string $needle): OptionalInterface
     {
-        return maybe(strrchr($this->input, $needle));
-    }
-
-    /**
-     * @param string $needle
-     * @param int    $offset
-     *
-     * @return Optional
-     */
-    public function indexOf(string $needle, int $offset = 0): Optional
-    {
-        return maybe(strpos($this->input, $needle, $offset));
+        return maybe(strrchr($this->input, $needle))->ensureNotFalse();
     }
 
     /**
      * @param string $needle
      * @param int    $offset
      *
-     * @return Optional
+     * @return OptionalInterface
      */
-    public function lastIndexOf(string $needle, int $offset = 0): Optional
+    public function indexOf(string $needle, int $offset = 0): OptionalInterface
     {
-        return maybe(strrpos($this->input, $needle, $offset));
+        return maybe(strpos($this->input, $needle, $offset))->ensureNotFalse();
+    }
+
+    /**
+     * @param string $needle
+     * @param int    $offset
+     *
+     * @return OptionalInterface
+     */
+    public function lastIndexOf(string $needle, int $offset = 0): OptionalInterface
+    {
+        return maybe(strrpos($this->input, $needle, $offset))->ensureNotFalse();
     }
 
     /**
@@ -446,9 +446,9 @@ final class StringWrapper implements StringConvertInterface, StringIteratorInter
     /**
      * @param int $index
      *
-     * @return Optional
+     * @return OptionalInterface
      */
-    public function at(int $index): Optional
+    public function at(int $index): OptionalInterface
     {
         if ($index >= 0 && $index < $this->length()) {
             return some($this->input[$index]);

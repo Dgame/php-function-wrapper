@@ -178,11 +178,7 @@ final class Unicode
      */
     public static function Clean(string $input): string
     {
-        foreach (self::ASCII as $key => $value) {
-            $input = str_replace($value, $key, $input);
-        }
-
-        return $input;
+        return string($input)->replace(self::ASCII, '')->get();
     }
 
     /**
@@ -192,6 +188,6 @@ final class Unicode
      */
     public function ReplaceUnsupported(string $input): string
     {
-        return string($input)->pregReplace([self::UNSUPPORTED => ''])->get();
+        return string($input)->pregReplace(self::UNSUPPORTED, '')->get();
     }
 }
