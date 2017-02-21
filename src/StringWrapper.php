@@ -176,12 +176,12 @@ final class StringWrapper
     }
 
     /**
-     * @param string $pattern
-     * @param array  $matches
+     * @param string     $pattern
+     * @param array|null $matches
      *
      * @return bool
      */
-    public function match(string $pattern, array &$matches = []): bool
+    public function match(string $pattern, array &$matches = null): bool
     {
         return preg_match($pattern, $this->input, $matches) === 1;
     }
