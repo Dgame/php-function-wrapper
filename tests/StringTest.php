@@ -36,6 +36,27 @@ class StringTest extends TestCase
         $this->assertEquals('fooBarQuatz', string('_foo bar quatz.')->camelize()->get());
     }
 
+    public function testUncamelize()
+    {
+        $this->assertEquals('foo-bar-quatz', string('fooBarQuatz')->unCamelize('-')->get());
+        $this->assertEquals('foo_bar_quatz', string('fooBarQuatz')->unCamelize('_')->get());
+        $this->assertEquals('foo.bar.quatz', string('fooBarQuatz')->unCamelize('.')->get());
+    }
+
+    public function testTitelize()
+    {
+        $this->assertEquals('FooBarQuatz', string('foo_bar_quatz')->titelize()->get());
+        $this->assertEquals('FooBarQuatz', string('foo.bar.quatz')->titelize()->get());
+        $this->assertEquals('FooBarQuatz', string('foo-bar-quatz')->titelize()->get());
+    }
+
+    public function testUntitelize()
+    {
+        $this->assertEquals('foo_bar_quatz', string('FooBarQuatz')->unTitelize('_')->get());
+        $this->assertEquals('foo.bar.quatz', string('FooBarQuatz')->unTitelize('.')->get());
+        $this->assertEquals('foo-bar-quatz', string('FooBarQuatz')->unTitelize('-')->get());
+    }
+
     public function testBetween()
     {
         $this->assertEquals('Middle', string('StartMiddleEnd')->between('Start', 'End')->get());

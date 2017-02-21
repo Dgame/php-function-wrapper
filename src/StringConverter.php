@@ -55,11 +55,36 @@ final class StringConverter implements StringConvertInterface
     }
 
     /**
+     * @param string $delimiter
+     *
+     * @return StringWrapper
+     */
+    public function unCamelize(string $delimiter): StringWrapper
+    {
+        return $this->wrapper->trim()
+                             ->trim('-_.')
+                             ->pregReplace('#\s+#', $delimiter)
+                             ->pregReplaceCallback('#\B([A-Z])#', function (array $matches) use ($delimiter) {
+                                 return $delimiter . lcfirst($matches[1][0]);
+                             });
+    }
+
+    /**
      * @return StringWrapper
      */
     public function titelize(): StringWrapper
     {
         return $this->camelize()->toUpperCaseFirst();
+    }
+
+    /**
+     * @param string $delimiter
+     *
+     * @return StringWrapper
+     */
+    public function unTitelize(string $delimiter = '-'): StringWrapper
+    {
+        return $this->unCamelize($delimiter)->toLowerCaseFirst();
     }
 
     /**

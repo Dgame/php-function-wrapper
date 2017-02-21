@@ -3,6 +3,7 @@
 namespace Dgame\Wrapper;
 
 use Dgame\Optional\OptionalInterface;
+use Exception;
 use function Dgame\Optional\maybe;
 use function Dgame\Optional\none;
 use function Dgame\Optional\some;
@@ -10,8 +11,23 @@ use function Dgame\Optional\some;
 /**
  * Class StringWrapper
  * @package Dgame\Wrapper
+ *
+ * @method StringWrapper between(string $left, string $right)
+ * @method StringIterator popFront(string $delimiter)
+ * @method StringIterator popBack(string $delimiter)
+ * @method StringWrapper before(string $value)
+ * @method StringWrapper after(string $value)
+ * @method StringWrapper from(string $value)
+ * @method StringWrapper until(string $value)
+ * @method StringWrapper underscored()
+ * @method StringWrapper dasherize()
+ * @method StringWrapper camelize()
+ * @method StringWrapper unCamelize(string $delimiter = '-')
+ * @method StringWrapper titelize()
+ * @method StringWrapper unTitelize(string $delimiter = '-')
+ * @method StringWrapper slugify(string $delimiter = '-')
  */
-final class StringWrapper implements StringConvertInterface, StringIteratorInterface
+final class StringWrapper
 {
     /**
      * @var string
@@ -26,6 +42,28 @@ final class StringWrapper implements StringConvertInterface, StringIteratorInter
     public function __construct(string $input = null)
     {
         $this->input = $input;
+    }
+
+    /**
+     * @param string $method
+     * @param array  $arguments
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    public function __call(string $method, array $arguments)
+    {
+        $converter = new StringConverter($this);
+        if (method_exists($converter, $method)) {
+            return call_user_func_array([$converter, $method], $arguments);
+        }
+
+        $iterator = new StringIterator($this);
+        if (method_exists($iterator, $method)) {
+            return call_user_func_array([$iterator, $method], $arguments);
+        }
+
+        throw new Exception('Undefined method call: ' . $method);
     }
 
     /**
@@ -146,143 +184,6 @@ final class StringWrapper implements StringConvertInterface, StringIteratorInter
     public function match(string $pattern, array &$matches = []): bool
     {
         return preg_match($pattern, $this->input, $matches) === 1;
-    }
-
-    /**
-     * @return StringWrapper
-     */
-    public function underscored(): StringWrapper
-    {
-        $converter = new StringConverter($this);
-
-        return $converter->underscored();
-    }
-
-    /**
-     * @return StringWrapper
-     */
-    public function dasherize(): StringWrapper
-    {
-        $converter = new StringConverter($this);
-
-        return $converter->dasherize();
-    }
-
-    /**
-     * @return StringWrapper
-     */
-    public function camelize(): StringWrapper
-    {
-        $converter = new StringConverter($this);
-
-        return $converter->camelize();
-    }
-
-    /**
-     * @return StringWrapper
-     */
-    public function titelize(): StringWrapper
-    {
-        $converter = new StringConverter($this);
-
-        return $converter->titelize();
-    }
-
-    /**
-     * @param string $delimiter
-     *
-     * @return StringWrapper
-     */
-    public function slugify(string $delimiter = '-'): StringWrapper
-    {
-        $converter = new StringConverter($this);
-
-        return $converter->slugify($delimiter);
-    }
-
-    /**
-     * @param string $left
-     * @param string $right
-     *
-     * @return StringWrapper
-     */
-    public function between(string $left, string $right): StringWrapper
-    {
-        $iterator = new StringIterator($this);
-
-        return $iterator->between($left, $right);
-    }
-
-    /**
-     * @param string $delimiter
-     *
-     * @return StringIterator
-     */
-    public function popFront(string $delimiter): StringIterator
-    {
-        $iterator = new StringIterator($this);
-
-        return $iterator->popFront($delimiter);
-    }
-
-    /**
-     * @param string $delimiter
-     *
-     * @return StringIterator
-     */
-    public function popBack(string $delimiter): StringIterator
-    {
-        $iterator = new StringIterator($this);
-
-        return $iterator->popBack($delimiter);
-    }
-
-    /**
-     * @param string $value
-     *
-     * @return StringWrapper
-     */
-    public function before(string $value): StringWrapper
-    {
-        $iterator = new StringIterator($this);
-
-        return $iterator->before($value);
-    }
-
-    /**
-     * @param string $value
-     *
-     * @return StringWrapper
-     */
-    public function after(string $value): StringWrapper
-    {
-        $iterator = new StringIterator($this);
-
-        return $iterator->after($value);
-    }
-
-    /**
-     * @param string $value
-     *
-     * @return StringWrapper
-     */
-    public function from(string $value): StringWrapper
-    {
-        $iterator = new StringIterator($this);
-
-        return $iterator->from($value);
-    }
-
-    /**
-     * @param string $value
-     *
-     * @return StringWrapper
-     */
-    public function until(string $value): StringWrapper
-    {
-        $iterator = new StringIterator($this);
-
-        return $iterator->until($value);
     }
 
     /**
