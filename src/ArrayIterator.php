@@ -195,9 +195,13 @@ final class ArrayIterator implements ArrayIteratorInterface
      */
     public function all(callable $callback): bool
     {
-        return $this->wrapper->filter(function($value) use($callback) {
-            return !$callback($value);
-        })->isEmpty();
+        foreach ($this->wrapper->get() as $value) {
+            if (!$callback($value)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -207,8 +211,12 @@ final class ArrayIterator implements ArrayIteratorInterface
      */
     public function any(callable $callback): bool
     {
-        return $this->wrapper->filter(function($value) use($callback) {
-            return $callback($value);
-        })->isNotEmpty();
+        foreach ($this->wrapper->get() as $value) {
+            if ($callback($value)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

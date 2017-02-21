@@ -3,6 +3,7 @@
 namespace Dgame\Wrapper;
 
 use Dgame\Optional\OptionalInterface;
+use Exception;
 use function Dgame\Optional\maybe;
 use function Dgame\Optional\none;
 use function Dgame\Optional\some;
@@ -10,8 +11,24 @@ use function Dgame\Optional\some;
 /**
  * Class ArrayWrapper
  * @package Dgame\Wrapper
+ *
+ * @method ArrayGroup group()
+ * @method ArrayProcedure process()
+ * @method ArrayWrapper take(int $n)
+ * @method ArrayWrapper skip(int $n)
+ * @method ArrayWrapper takeWhile(callable $callback)
+ * @method ArrayWrapper skipWhile(callable $callback)
+ * @method ArrayWrapper takeIf(callable $callback)
+ * @method ArrayWrapper skipIf(callable $callback)
+ * @method ArrayWrapper between($left, $right)
+ * @method ArrayWrapper before($value)
+ * @method ArrayWrapper after($value)
+ * @method ArrayWrapper from($value)
+ * @method ArrayWrapper until($value)
+ * @method bool all(callable $callback)
+ * @method bool any(callable $callback)
  */
-final class ArrayWrapper implements ArrayIteratorInterface
+final class ArrayWrapper
 {
     /**
      * @var array
@@ -26,6 +43,30 @@ final class ArrayWrapper implements ArrayIteratorInterface
     public function __construct(array $input)
     {
         $this->input = $input;
+    }
+
+    /**
+     * @param string $method
+     * @param array  $arguments
+     *
+     * @return ArrayGroup|ArrayProcedure|mixed
+     * @throws Exception
+     */
+    public function __call(string $method, array $arguments)
+    {
+        switch ($method) {
+            case 'group':
+                return new ArrayGroup($this->input);
+            case 'process':
+                return new ArrayProcedure($this->input);
+            default:
+                $iterator = new ArrayIterator($this);
+                if (method_exists($iterator, $method)) {
+                    return call_user_func_array([$iterator, $method], $arguments);
+                }
+
+                throw new Exception('Undefined method call: ' . $method);
+        }
     }
 
     /**
@@ -56,179 +97,6 @@ final class ArrayWrapper implements ArrayIteratorInterface
     public function implode(string $glue = null): StringWrapper
     {
         return new StringWrapper(implode($glue, $this->input));
-    }
-
-    /**
-     * @return ArrayGroup
-     */
-    public function group(): ArrayGroup
-    {
-        return new ArrayGroup($this->input);
-    }
-
-    /**
-     * @param int $n
-     *
-     * @return ArrayWrapper
-     */
-    public function take(int $n): ArrayWrapper
-    {
-        $iterator = new ArrayIterator($this);
-
-        return $iterator->take($n);
-    }
-
-    /**
-     * @param int $n
-     *
-     * @return ArrayWrapper
-     */
-    public function skip(int $n): ArrayWrapper
-    {
-        $iterator = new ArrayIterator($this);
-
-        return $iterator->skip($n);
-    }
-
-    /**
-     * @param callable $callback
-     *
-     * @return ArrayWrapper
-     */
-    public function takeWhile(callable $callback): ArrayWrapper
-    {
-        $iterator = new ArrayIterator($this);
-
-        return $iterator->takeWhile($callback);
-    }
-
-    /**
-     * @param callable $callback
-     *
-     * @return ArrayWrapper
-     */
-    public function skipWhile(callable $callback): ArrayWrapper
-    {
-        $iterator = new ArrayIterator($this);
-
-        return $iterator->skipWhile($callback);
-    }
-
-    /**
-     * @param callable $callback
-     *
-     * @return ArrayWrapper
-     */
-    public function takeIf(callable $callback): ArrayWrapper
-    {
-        $iterator = new ArrayIterator($this);
-
-        return $iterator->takeIf($callback);
-    }
-
-    /**
-     * @param callable $callback
-     *
-     * @return ArrayWrapper
-     */
-    public function skipIf(callable $callback): ArrayWrapper
-    {
-        $iterator = new ArrayIterator($this);
-
-        return $iterator->skipIf($callback);
-    }
-
-    /**
-     * @param $left
-     * @param $right
-     *
-     * @return ArrayWrapper
-     */
-    public function between($left, $right): ArrayWrapper
-    {
-        $iterator = new ArrayIterator($this);
-
-        return $iterator->between($left, $right);
-    }
-
-    /**
-     * @param $value
-     *
-     * @return ArrayWrapper
-     */
-    public function before($value): ArrayWrapper
-    {
-        $iterator = new ArrayIterator($this);
-
-        return $iterator->before($value);
-    }
-
-    /**
-     * @param $value
-     *
-     * @return ArrayWrapper
-     */
-    public function after($value): ArrayWrapper
-    {
-        $iterator = new ArrayIterator($this);
-
-        return $iterator->after($value);
-    }
-
-    /**
-     * @param $value
-     *
-     * @return ArrayWrapper
-     */
-    public function from($value): ArrayWrapper
-    {
-        $iterator = new ArrayIterator($this);
-
-        return $iterator->from($value);
-    }
-
-    /**
-     * @param $value
-     *
-     * @return ArrayWrapper
-     */
-    public function until($value): ArrayWrapper
-    {
-        $iterator = new ArrayIterator($this);
-
-        return $iterator->until($value);
-    }
-
-    /**
-     * @param callable $callback
-     *
-     * @return bool
-     */
-    public function all(callable $callback): bool
-    {
-        $iterator = new ArrayIterator($this);
-
-        return $iterator->all($callback);
-    }
-
-    /**
-     * @param callable $callback
-     *
-     * @return bool
-     */
-    public function any(callable $callback): bool
-    {
-        $iterator = new ArrayIterator($this);
-
-        return $iterator->any($callback);
-    }
-
-    /**
-     * @return ArrayProcedure
-     */
-    public function process(): ArrayProcedure
-    {
-        return new ArrayProcedure($this->input);
     }
 
     /**
