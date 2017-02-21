@@ -2,7 +2,7 @@
 
 namespace Dgame\Wrapper;
 
-use Dgame\Optional\OptionalInterface;
+use Dgame\Optional\Optional;
 use Exception;
 use function Dgame\Optional\maybe;
 use function Dgame\Optional\none;
@@ -291,9 +291,9 @@ final class StringWrapper
     /**
      * @param string $needle
      *
-     * @return OptionalInterface
+     * @return Optional
      */
-    public function fromFirstOccurrenceOf(string $needle): OptionalInterface
+    public function fromFirstOccurrenceOf(string $needle): Optional
     {
         return maybe(strstr($this->input, $needle))->ensureNotFalse();
     }
@@ -301,9 +301,9 @@ final class StringWrapper
     /**
      * @param string $needle
      *
-     * @return OptionalInterface
+     * @return Optional
      */
-    public function fromLastOccurrenceOf(string $needle): OptionalInterface
+    public function fromLastOccurrenceOf(string $needle): Optional
     {
         return maybe(strrchr($this->input, $needle))->ensureNotFalse();
     }
@@ -312,9 +312,9 @@ final class StringWrapper
      * @param string $needle
      * @param int    $offset
      *
-     * @return OptionalInterface
+     * @return Optional
      */
-    public function indexOf(string $needle, int $offset = 0): OptionalInterface
+    public function indexOf(string $needle, int $offset = 0): Optional
     {
         return maybe(strpos($this->input, $needle, $offset))->ensureNotFalse();
     }
@@ -323,9 +323,9 @@ final class StringWrapper
      * @param string $needle
      * @param int    $offset
      *
-     * @return OptionalInterface
+     * @return Optional
      */
-    public function lastIndexOf(string $needle, int $offset = 0): OptionalInterface
+    public function lastIndexOf(string $needle, int $offset = 0): Optional
     {
         return maybe(strrpos($this->input, $needle, $offset))->ensureNotFalse();
     }
@@ -347,9 +347,9 @@ final class StringWrapper
     /**
      * @param int $index
      *
-     * @return OptionalInterface
+     * @return Optional
      */
-    public function at(int $index): OptionalInterface
+    public function at(int $index): Optional
     {
         if ($index >= 0 && $index < $this->length()) {
             return some($this->input[$index]);

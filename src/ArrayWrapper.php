@@ -2,7 +2,7 @@
 
 namespace Dgame\Wrapper;
 
-use Dgame\Optional\OptionalInterface;
+use Dgame\Optional\Optional;
 use Exception;
 use function Dgame\Optional\maybe;
 use function Dgame\Optional\none;
@@ -239,25 +239,25 @@ final class ArrayWrapper
     }
 
     /**
-     * @return OptionalInterface
+     * @return Optional
      */
-    public function first(): OptionalInterface
+    public function first(): Optional
     {
         return maybe(reset($this->input))->ensureNotFalse();
     }
 
     /**
-     * @return OptionalInterface
+     * @return Optional
      */
-    public function last(): OptionalInterface
+    public function last(): Optional
     {
         return maybe(end($this->input))->ensureNotFalse();
     }
 
     /**
-     * @return OptionalInterface
+     * @return Optional
      */
-    public function popFront(): OptionalInterface
+    public function popFront(): Optional
     {
         if ($this->isNotEmpty()) {
             $value = reset($this->input);
@@ -272,9 +272,9 @@ final class ArrayWrapper
     /**
      * @param $key
      *
-     * @return OptionalInterface
+     * @return Optional
      */
-    public function pop($key): OptionalInterface
+    public function pop($key): Optional
     {
         if ($this->hasKey($key)) {
             $value = some($this->input[$key]);
@@ -287,17 +287,17 @@ final class ArrayWrapper
     }
 
     /**
-     * @return OptionalInterface
+     * @return Optional
      */
-    public function shift(): OptionalInterface
+    public function shift(): Optional
     {
         return maybe(array_shift($this->input));
     }
 
     /**
-     * @return OptionalInterface
+     * @return Optional
      */
-    public function popBack(): OptionalInterface
+    public function popBack(): Optional
     {
         return maybe(array_pop($this->input));
     }
@@ -361,9 +361,9 @@ final class ArrayWrapper
     /**
      * @param $value
      *
-     * @return OptionalInterface
+     * @return Optional
      */
-    public function search($value): OptionalInterface
+    public function search($value): Optional
     {
         return maybe(array_search($value, $this->input))->ensureNotFalse();
     }
@@ -381,9 +381,9 @@ final class ArrayWrapper
     /**
      * @param $value
      *
-     * @return OptionalInterface
+     * @return Optional
      */
-    public function indexOf($value): OptionalInterface
+    public function indexOf($value): Optional
     {
         return $this->values()->search($value);
     }
@@ -525,9 +525,9 @@ final class ArrayWrapper
     /**
      * @param $key
      *
-     * @return OptionalInterface
+     * @return Optional
      */
-    public function valueOf($key): OptionalInterface
+    public function valueOf($key): Optional
     {
         if ($this->hasKey($key)) {
             return some($this->input[$key]);
@@ -613,17 +613,17 @@ final class ArrayWrapper
     }
 
     /**
-     * @return OptionalInterface
+     * @return Optional
      */
-    public function currentValue(): OptionalInterface
+    public function currentValue(): Optional
     {
         return maybe(current($this->input))->ensureNotFalse();
     }
 
     /**
-     * @return OptionalInterface
+     * @return Optional
      */
-    public function currentKey(): OptionalInterface
+    public function currentKey(): Optional
     {
         return maybe(key($this->input));
     }
